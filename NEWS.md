@@ -1,3 +1,5 @@
+# limpido 0.0.0.9001
+
 * Added licence, CoC, basic badges
 * Added basic support for package development, CI, tests, git/GitHub,
   spellcheck.
