@@ -1,3 +1,4 @@
+^data-raw$
 ^codecov\.yml$
 ^\.travis\.yml$
 ^LICENSE\.md$
@@ -5,3 +6,4 @@
 ^README\.Rmd$
 ^limpido\.Rproj$
 ^\.Rproj\.user$
+^inst/Pedianet_2004-2017$

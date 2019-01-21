@@ -8,16 +8,17 @@ Authors@R:
            email = "corrado.lanera@gmail.com")
 Description: What the package does (one paragraph).
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
 Depends: 
     R (>= 3.1)
+Imports: 
+    magrittr (>= 1.5),
+    tibble (>= 2.0.0)
 Suggests: 
-    covr,
-    testthat,
-    spelling
+    covr (>= 3.2.1),
+    spelling (>= 2.0),
+    testthat (>= 2.0.1)
+Encoding: UTF-8
+Language: en-US
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-Imports: 
-    magrittr
-Language: en-US
