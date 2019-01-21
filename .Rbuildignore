@@ -1,3 +1,7 @@
+^codecov\.yml$
+^\.travis\.yml$
+^LICENSE\.md$
+^\.github$
 ^README\.Rmd$
 ^limpido\.Rproj$
 ^\.Rproj\.user$
