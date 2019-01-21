@@ -1,0 +1,28 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# limpido
+
+The goal of the package `limpido` is to develop a "**L**earn**I**ng
+**M**achine for **P**ed**I**atric **D**etection of **O**titis".
+
+## Installation
+
+You can install the development version of the package `limpido` from
+[GitHub](https://github.com/) with the following procedure:
+
+```{r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("UBESP-DCTV/limpido")
+```
