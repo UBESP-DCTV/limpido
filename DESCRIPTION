@@ -1,6 +1,6 @@
 Package: limpido
 Title: LearnIng Machine for PedIatric Detection of Otitis
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: 
     c(
         person(given = "Corrado",

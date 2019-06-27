@@ -1,3 +1,5 @@
+# limpido (development version)
+
 * Update folder (removing data, including analyses)
 * Update codecov and Travis CI setup
 
