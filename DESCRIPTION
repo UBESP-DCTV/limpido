@@ -2,10 +2,27 @@ Package: limpido
 Title: LearnIng Machine for PedIatric Detection of Otitis
 Version: 0.0.0.9001
 Authors@R: 
-    person(given = "Corrado",
-           family = "Lanera",
-           role = c("aut", "cre"),
-           email = "corrado.lanera@gmail.com"
+    c(
+        person(given = "Corrado",
+               family = "Lanera",
+               role = c("aut", "cre"),
+               email = "corrado.lanera@gmail.com"
+        ),
+        person(given = "Elisa",
+               family = "Barbieri",
+               role = "aut",
+               email = "elisa.barbieri@unipd.it"
+        ),
+        person(given = "Carlo",
+               family = "Giacquinto",
+               role = "ctb",
+               email = "carlo.giaquinto@unipd.it"
+        ),
+        person(given = "Dario",
+               family = "Gregori",
+               role = "ctb",
+               email = "dario.gregori@unipd.it"
+        ),
     )
 Description: What the package does (one paragraph).
 License: GPL-3
