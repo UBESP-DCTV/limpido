@@ -1,3 +1,6 @@
+* Update folder (removing data, including analyses)
+* Update codecov and Travis CI setup
+
 # limpido 0.0.0.9001
 
 * Added licence, CoC, basic badges
