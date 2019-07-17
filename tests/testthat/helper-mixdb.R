@@ -1,4 +1,4 @@
-test_raw <- tibble::tribble(
+test_db <- tibble::tribble(
     ~class, ~id, ~notes,      ~gender,
     0  ,   1, "foo notes",     "male",
     0  ,   2, "bar notes",     "female",

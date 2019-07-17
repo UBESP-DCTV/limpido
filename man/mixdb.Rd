@@ -4,24 +4,28 @@
 \alias{mixdb}
 \title{mixdb object}
 \usage{
-mixdb(raw, meta)
+mixdb(.data, .meta_vars = NULL, lowercase = TRUE, ..., locale = "en")
 }
 \arguments{
-\item{raw}{(data frame) of raw data. (see \strong{details} for specs)}
+\item{.data}{(data frame) of .data data. (see \strong{details} for specs)}
 
-\item{meta}{(list, default `NULL``) optional list of (unquoted)
-columns' names representing metadata. (see \strong{details} for specs)}
+\item{.meta_vars}{optional list of (unquoted) columns' names generated
+by \code{\link{meta_vars}()}, and representing metadata of
+interest. (see \strong{details} for specs)}
 }
 \value{
-an object of class \code{\link[limpido]{mixdb}}
+an object of class \code{\link[limpido]{mixdb}}, with an
+attribute \strong{meta} of class \link[tibble:tibble-package]{tibble}
+reporting the additional provided and selected (by \code{.meta_vars})
+information.
 }
 \description{
-\code{\link[limpido]{mixdb}} reads a raw general database stored in a
+\code{\link[limpido]{mixdb}} reads a .data general database stored in a
 data.frame and convert it in a parsed list for mlt algorithms (keras
 and tensorflow) aimed to Natural Language or mixed formad analyses.
 }
 \details{
-The `raw`` data frame in input must have the following
+The `.data`` data frame in input must have the following
 (named) column:
 \describe{
 \item{class}{(factor) classification's labels, stored in a
@@ -31,12 +35,13 @@ class will return an error.
 }
 }
 
-All the other columns listed in the \code{meta} parameter will
+All the other columns listed in the \code{.meta_vars} parameter will
 represents metadata of the datasets, useful for other purposes then
 NLP, e.g., possible future non-textual covariates for the models.
 
-All the character columns not listed in \code{meta} will be treated as
-textual ones and converted, accordingly to the dictionary provided
+All the character columns not listed in \code{.meta_vars} will be
+treated as textual ones and converted, accordingly to the
+dictionary provided
 
 All the other columns will be ignored and not saved anywhere.
 }

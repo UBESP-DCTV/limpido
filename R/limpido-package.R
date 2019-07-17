@@ -9,5 +9,6 @@
 #' @importFrom usethis ui_stop ui_warn
 #' @importFrom usethis ui_yeah ui_nope
 #' @importFrom usethis ui_field ui_value ui_path ui_code
+#' @importFrom tibble tibble
 ## usethis namespace: end
 NULL
