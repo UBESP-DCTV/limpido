@@ -8,8 +8,27 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/UBESP-DCTV/limpido}
+  \item Report bugs at \url{https://github.com/UBESP-DCTV/limpido/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Corrado Lanera \email{corrado.lanera@gmail.com}
+
+Authors:
+\itemize{
+  \item Elisa Barbieri \email{elisa.barbieri@unipd.it}
+}
+
+Other contributors:
+\itemize{
+  \item Carlo Giacquinto \email{carlo.giaquinto@unipd.it} [contributor]
+  \item Dario Gregori \email{dario.gregori@unipd.it} [contributor]
+}
 
 }
 \keyword{internal}
