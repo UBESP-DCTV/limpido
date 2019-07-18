@@ -37,8 +37,7 @@ Imports:
     purrr,
     furrr,
     stringi,
-    stringr,
-    data.table
+    stringr
 Suggests: 
     covr (>= 3.2.1),
     spelling (>= 2.0),

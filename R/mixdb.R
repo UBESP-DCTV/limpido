@@ -4,7 +4,7 @@
 #' data.frame and convert it in a parsed list for mlt algorithms (keras
 #'  and tensorflow) aimed to Natural Language or mixed formad analyses.
 #'
-#' @details The `.data`` data frame in input must have the following
+#' @details The `.data` data frame in input must have the following
 #'   (named) column:
 #'   \describe{
 #'     \item{class}{(factor) classification's labels, stored in a
@@ -24,10 +24,15 @@
 #'
 #'   All the other columns will be ignored and not saved anywhere.
 #'
-#' @param .data (data frame) of .data data. (see **details** for specs)
+#' @param .data (data frame) of data. (see **details** for specs)
 #' @param .meta_vars optional list of (unquoted) columns' names generated
 #'   by \code{\link{meta_vars}()}, and representing metadata of
 #'   interest. (see **details** for specs)
+#' @param lowercase (lgl, default = TRUE) perform lowercase
+#'     transformaiton?
+#' @param locale (chr, default = "en") Locale to use for translations.
+#'     Defaults to "en" (English) to ensure consistent default ordering
+#'     across platforms.
 #'
 #' @return an object of class \code{\link[limpido]{mixdb}}, with an
 #'   attribute **meta** of class [tibble][tibble::tibble-package]
@@ -42,28 +47,28 @@
 #' library(tibble)
 #' library(limpido)
 #' test <- tribble(
-#'   ~class, ~id, ~notes,      ~gender,
-#'      0  ,   1, "foo notes",     "male",
-#'      0  ,   2, "bar notes",     "female",
-#'      1  ,   1, "another notes", "male",
-#'      1  ,   3, "annotated foo", "female"
+#'   ~class, ~id, ~notes,                  ~gender,
+#'      0  ,   1, "foo notes foo",          "male",
+#'      0  ,   2, "bar notes foo",          "female",
+#'      1  ,   1, "another notes",          "male",
+#'      1  ,   3, "annotated foo one two",  "female"
 #' )
-#' mixbd(test, meta = list(id, gender))
+#' mixdb(test, meta_vars(id, gender))
+#' mixdb(test, meta_vars(id))
 #'
 mixdb <- function(.data,
                   .meta_vars = NULL,
                   lowercase = TRUE,
-                  ...,
                   locale = "en"
 ) {
     UseMethod("mixdb", .data)
 }
 
-
+#' @rdname mixdb
+#' @export
 mixdb.default <- function(.data,
                           .meta_vars = NULL,
                           lowercase = TRUE,
-                          ...,
                           locale = "en"
 ) {
     ui_info(
@@ -78,15 +83,20 @@ mixdb.default <- function(.data,
 }
 
 
-mixdb.data.frame <- function(.data = test_db,
+#' @rdname mixdb
+#' @export
+mixdb.data.frame <- function(.data,
                              .meta_vars = NULL,
                              lowercase = TRUE,
-                             ...,
                              locale = "en"
 ) {
     # define the textual base dataset: not meta character columns
-    text_df <- dplyr::select(.data, -c(!!!unique(.meta_vars))) %>%
-        dplyr::select_if(is.character)
+    text_df <- text_no_meta(.data, .meta_vars)
+    if (lowercase) {
+        text_df <- dplyr::mutate_all(text_df, stringr::str_to_lower,
+            locale = locale
+        )
+    }
 
     # define the meta dataset (including text and classes)
     meta_df <- .data %>%
@@ -97,21 +107,18 @@ mixdb.data.frame <- function(.data = test_db,
         )
 
     # extract words (token will be applyed later, eventualy)
-    text <- as.list(purrr::reduce(text_df, paste, sep = " [SEP] ")) %>%
-        furrr::future_map(
-            stringi::stri_extract_all_words,
-            .progress = TRUE
-        ) %>%
-        purrr::flatten()
+    text_df <- dplyr::mutate_all(text_df,
+        stringi::stri_extract_all_words
+    )
 
-    if (lowercase) {
-        text <- map(text, stringr::str_to_lower, locale = locale)
+    text <- if (length(text_df) > 1) {
+        purrr::reduce(text_df, paste_sep)
+    } else {
+        as.list(text_df[[1]])
     }
 
     # define the dictionary (sorted table of named integers)
-    dictionary <- unlist(text) %>%
-        table() %>%
-        sort.int(decreasing = TRUE)
+    dictionary <- dictionary(text)
 
 
     structure(
@@ -119,7 +126,7 @@ mixdb.data.frame <- function(.data = test_db,
             # this is a list of integer vector representing the mapping
             # to the vocabulary for the text. each entry is an
             # observation.
-            x = furrr::future_map(text, ~as.integer(dictionary[.])),
+            x = furrr::future_map(text, ~dictionary[.]),
 
             # this is a factor of the output classes. each entry is
             # to the corresponding observation.
@@ -129,4 +136,36 @@ mixdb.data.frame <- function(.data = test_db,
         dictionary = dictionary,
         class = "mixdb"
     )
+}
+
+
+
+#' Dictionary extractor
+#'
+#' @param x an object from which extract the \code{\link{dictionary}}
+#'
+#' @return a \code{\link{dictionary}}
+#' @seealso \code{\link{dictionary}}
+#' @export
+#'
+#' @examples
+#' library(tibble)
+#' library(limpido)
+#' test <- tribble(
+#'   ~class, ~id, ~notes,      ~gender,
+#'      0  ,   1, "foo notes",     "male",
+#'      0  ,   2, "bar notes",     "female",
+#'      1  ,   1, "another notes", "male",
+#'      1  ,   3, "annotated foo", "female"
+#' )
+#' mixdb(test, meta_vars(id, gender)) %>%
+#'     get_dictionary()
+get_dictionary <- function(x) {
+    UseMethod("get_dictionary", x)
+}
+
+#' @rdname get_dictionary
+#' @export
+get_dictionary.mixdb <- function(x) {
+    attr(x, "dictionary")
 }

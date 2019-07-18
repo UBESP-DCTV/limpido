@@ -1,7 +1,3 @@
-test_mixdb <- mixdb(test_db, meta_vars(id, gender))
-test_meta <- attr(test_mixdb, "meta")
-test_dictionary <- attr(test_mixdb, "dictionary")
-
 test_that("mixdb() returned the correct class", {
   expect_is(test_mixdb, "mixdb")
 })
@@ -37,11 +33,33 @@ test_that("names are correctly passed by `meta`", {
     expect_equal(names(test_meta), c("id", "gender", "notes", "class"))
 })
 
-test_that("mixdb's `dictionary`` is sorted table", {
-    expect_is(test_dictionary, "table")
-    expect_identical(
-        test_dictionary,
-        sort(test_dictionary, decreasing = TRUE)
-    )
+
+test_that("mixdb's `dictionary`` is a dictionary", {
+    expect_is(test_mixdb_dictionary, "dictionary")
 })
 
+test_that("all work on test_tbl", {
+    expect_is(test_tbl_mixdb, "mixdb")
+    expect_setequal(test_tbl_dict, 1:48)
+    expect_equal(test_tbl_freq[[1]], 1357L)
+})
+
+
+test_that("add id to meta and not gender to data", {
+  out_a <- mixdb(test_db, meta_vars(id, gender))
+  expect_named(attr(out_a, "meta"), c("id", "gender", "notes", "class"))
+  expect_length(out_a[["x"]][[1]], 2L)
+  expect_false(any(stringr::str_detect(
+    names(out_a[["x"]][[1]]),
+    "\\[sep\\]"
+  )))
+})
+
+
+test_that("works with added columns", {
+  out_b <- mixdb(test_db, meta_vars(id))
+  expect_named(attr(out_b, "meta"), c("id", "notes", "gender", "class"))
+  expect_length(out_b[["x"]][[1]], 4L)
+  expect_false(any(stringr::str_detect(names(out_b[["x"]][[1]]), " ")))
+  expect_equal(names(out_b[["x"]][[1L]]), c("foo", "notes", "[SEP]", "male"))
+})

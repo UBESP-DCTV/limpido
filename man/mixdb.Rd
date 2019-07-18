@@ -2,16 +2,31 @@
 % Please edit documentation in R/mixdb.R
 \name{mixdb}
 \alias{mixdb}
+\alias{mixdb.default}
+\alias{mixdb.data.frame}
 \title{mixdb object}
 \usage{
-mixdb(.data, .meta_vars = NULL, lowercase = TRUE, ..., locale = "en")
+mixdb(.data, .meta_vars = NULL, lowercase = TRUE, locale = "en")
+
+\method{mixdb}{default}(.data, .meta_vars = NULL, lowercase = TRUE,
+  locale = "en")
+
+\method{mixdb}{data.frame}(.data, .meta_vars = NULL, lowercase = TRUE,
+  locale = "en")
 }
 \arguments{
-\item{.data}{(data frame) of .data data. (see \strong{details} for specs)}
+\item{.data}{(data frame) of data. (see \strong{details} for specs)}
 
 \item{.meta_vars}{optional list of (unquoted) columns' names generated
 by \code{\link{meta_vars}()}, and representing metadata of
 interest. (see \strong{details} for specs)}
+
+\item{lowercase}{(lgl, default = TRUE) perform lowercase
+transformaiton?}
+
+\item{locale}{(chr, default = "en") Locale to use for translations.
+Defaults to "en" (English) to ensure consistent default ordering
+across platforms.}
 }
 \value{
 an object of class \code{\link[limpido]{mixdb}}, with an
@@ -25,7 +40,7 @@ data.frame and convert it in a parsed list for mlt algorithms (keras
 and tensorflow) aimed to Natural Language or mixed formad analyses.
 }
 \details{
-The `.data`` data frame in input must have the following
+The \code{.data} data frame in input must have the following
 (named) column:
 \describe{
 \item{class}{(factor) classification's labels, stored in a
@@ -53,12 +68,13 @@ instead is used to encode any unknown word.
 library(tibble)
 library(limpido)
 test <- tribble(
-  ~class, ~id, ~notes,      ~gender,
-     0  ,   1, "foo notes",     "male",
-     0  ,   2, "bar notes",     "female",
-     1  ,   1, "another notes", "male",
-     1  ,   3, "annotated foo", "female"
+  ~class, ~id, ~notes,                  ~gender,
+     0  ,   1, "foo notes foo",          "male",
+     0  ,   2, "bar notes foo",          "female",
+     1  ,   1, "another notes",          "male",
+     1  ,   3, "annotated foo one two",  "female"
 )
-mixbd(test, meta = list(id, gender))
+mixdb(test, meta_vars(id, gender))
+mixdb(test, meta_vars(id))
 
 }
