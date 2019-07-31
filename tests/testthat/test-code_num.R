@@ -7,3 +7,11 @@ test_that("coding numbers works", {
 
     expect_equal(code_num(reference), target)
 })
+
+test_that("can admit words with numbers", {
+    expect_equal(code_num("a2b1"), "a[NUM]b[NUM]")
+    expect_equal(
+        code_num("34 a2b1 12", ignore_in_word = TRUE),
+        "[NUM] a2b1 [NUM]"
+    )
+})

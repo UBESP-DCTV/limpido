@@ -5,9 +5,10 @@
 \alias{code_num.character}
 \title{Code numbers}
 \usage{
-code_num(text, code)
+code_num(text, code, ignore_in_word)
 
-\method{code_num}{character}(text, code = "[NUM]")
+\method{code_num}{character}(text, code = "[NUM]",
+  ignore_in_word = FALSE)
 }
 \arguments{
 \item{text}{(chr) vector of text to in which code the numbers}
