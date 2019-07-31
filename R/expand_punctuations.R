@@ -1,6 +1,8 @@
 #' expand punctuation
 #'
 #' @param text (chr) vector
+#' @param regex (chr) representing the regular expression to use to
+#'     match words
 #'
 #' @return a character vector with all punctuation, sourrendered by
 #'    spaces
@@ -8,7 +10,7 @@
 #'
 #' @examples
 #' expand_punctuations(c("abc de", "a.b", "A.B", "c'è", "s.p.a."))
-expand_punctuations <- function(text) {
+expand_punctuations <- function(text, regex) {
     UseMethod("expand_punctuations", text)
 }
 

@@ -5,12 +5,15 @@
 \alias{expand_punctuations.character}
 \title{expand punctuation}
 \usage{
-expand_punctuations(text)
+expand_punctuations(text, regex)
 
-\method{expand_punctuations}{character}(text)
+\method{expand_punctuations}{character}(text, regex = "\\\\W+")
 }
 \arguments{
 \item{text}{(chr) vector}
+
+\item{regex}{(chr) representing the regular expression to use to
+match words}
 }
 \value{
 a character vector with all punctuation, sourrendered by
@@ -20,5 +23,5 @@ spaces
 expand punctuation
 }
 \examples{
-expand_punctuation(c("abc de", "a.b", "A.B", "c'è", "s.p.a."))
+expand_punctuations(c("abc de", "a.b", "A.B", "c'è", "s.p.a."))
 }
