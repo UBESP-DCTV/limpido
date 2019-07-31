@@ -5,14 +5,18 @@
 \alias{code_num.character}
 \title{Code numbers}
 \usage{
-code_num(text, code)
+code_num(text, code, ignore_in_word)
 
-\method{code_num}{character}(text, code = "[NUM]")
+\method{code_num}{character}(text, code = "[NUM]",
+  ignore_in_word = FALSE)
 }
 \arguments{
 \item{text}{(chr) vector of text to in which code the numbers}
 
 \item{code}{(chr) code to use to substitute the numbers}
+
+\item{ignore_in_word}{(lgl, default FALSE) should digits into words
+be ignored?}
 }
 \value{
 (chr) vector of the same length of \code{text} with al the numbers

@@ -20,5 +20,6 @@ expand_punctuations.character <- function(text, regex = "\\W+") {
     regex <- paste0("(", regex, ")")
 
     stringr::str_replace_all(text, regex, " \\1 ") %>%
-        stringr::str_squish()
+        stringr::str_squish() %>%
+        stringr::str_replace_all("\\[ NUM \\]", "\\[NUM\\]")
 }
