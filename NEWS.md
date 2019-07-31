@@ -1,5 +1,4 @@
-# limpido (development version)
-
+* Add `expand_punctuations()` to separate words from other characters
 * Added `create_ngram()` and `add_ngram()` to add engram to a `mixdb`.
   `create_ngram()` can be usefull stand-alone too.
 * Added constructor for the class `mixdb`. `mixdb` takes in input a 
