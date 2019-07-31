@@ -2,6 +2,8 @@
 #'
 #' @param text (chr) vector of text to in which code the numbers
 #' @param code (chr) code to use to substitute the numbers
+#' @param ignore_in_word (lgl, default FALSE) should digits into words
+#'     be ignored?
 #'
 #' @return (chr) vector of the same length of `text` with al the numbers
 #'     changed in `code`

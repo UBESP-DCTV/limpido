@@ -14,6 +14,9 @@ code_num(text, code, ignore_in_word)
 \item{text}{(chr) vector of text to in which code the numbers}
 
 \item{code}{(chr) code to use to substitute the numbers}
+
+\item{ignore_in_word}{(lgl, default FALSE) should digits into words
+be ignored?}
 }
 \value{
 (chr) vector of the same length of \code{text} with al the numbers
