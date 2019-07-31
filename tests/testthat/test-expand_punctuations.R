@@ -1,9 +1,19 @@
 test_that("expansion works", {
-    sample_text <- c("abc de", "a.b", "A.B", "c'è", "s.p.a.")
-    target <- c("abc de", "a . b", "A . B", "c ' è", "s . p . a .")
+    target <- c("abc de", "a.b", "A.B", "c'è", "s.p.a.")
+    expected <- c("abc de", "a . b", "A . B", "c ' è", "s . p . a .")
     expect_equal(
-        expand_punctuations(sample_text),
-        target
+        expand_punctuations(target),
+        expected
     )
 })
 
+
+test_that("don't detouch tags", {
+    expect_equal(expand_punctuations("[NUM]"), "[NUM]")
+    expect_equal(expand_punctuations("abc[NUM]"), "abc [NUM]")
+})
+
+
+test_that("options for words with numbers", {
+    expect_equal(expand_punctuations("1a2b"), "1a2b")
+})
