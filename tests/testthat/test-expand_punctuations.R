@@ -1,6 +1,8 @@
 test_that("expansion works", {
-    target <- c("abc de", "a.b", "A.B", "c'è", "s.p.a.")
-    expected <- c("abc de", "a . b", "A . B", "c ' è", "s . p . a .")
+    target <- c("abc de", "a.b", "A.B", "c'è", "s.p.a.",
+                "a;;b", "a,,b", "a;,b", "ciao... ciao")
+    expected <- c("abc de", "a . b", "A . B", "c ' è", "s . p . a .",
+                  "a ; b", "a , b", "a ; , b", "ciao __ELIPSIS__ ciao")
     expect_equal(
         expand_punctuations(target),
         expected
@@ -9,8 +11,8 @@ test_that("expansion works", {
 
 
 test_that("don't detouch tags", {
-    expect_equal(expand_punctuations("[NUM]"), "[NUM]")
-    expect_equal(expand_punctuations("abc[NUM]"), "abc [NUM]")
+    expect_equal(expand_punctuations("__NUM__"), "__NUM__")
+    expect_equal(expand_punctuations("abc__NUM__"), "abc__NUM__")
 })
 
 
