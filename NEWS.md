@@ -1,3 +1,5 @@
+* Add script in `data-raw` to create the pretrained embeddings from 
+  the full pedianet db.
 * Add `prepare_db()` to convert the final pedianet dataframe to a
   character vector usefull for FastText
 * incorporate explicit `__NA__` tag for missing entries in the creation
