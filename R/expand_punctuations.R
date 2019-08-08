@@ -1,8 +1,6 @@
 #' expand punctuation
 #'
 #' @param text (chr) vector
-#' @param regex (chr) representing the regular expression to use to
-#'     match words
 #'
 #' @return a character vector with all punctuation, sourrendered by
 #'    spaces
@@ -10,16 +8,26 @@
 #'
 #' @examples
 #' expand_punctuations(c("abc de", "a.b", "A.B", "c'è", "s.p.a."))
-expand_punctuations <- function(text, regex) {
+expand_punctuations <- function(text) {
     UseMethod("expand_punctuations", text)
 }
 
 #' @rdname expand_punctuations
 #' @export
-expand_punctuations.character <- function(text, regex = "\\W+") {
-    regex <- paste0("(", regex, ")")
+expand_punctuations.character <- function(text) {
 
-    stringr::str_replace_all(text, regex, " \\1 ") %>%
-        stringr::str_squish() %>%
-        stringr::str_replace_all("\\[ NUM \\]", "\\[NUM\\]")
+    # the aim is to shrink punctuation repetitions
+
+    regex <- paste0("(\\W)\\1*")
+
+
+    text %>%
+        # avoid shrink on elipsis
+        stringr::str_replace_all("\\.{3}", " __ELIPSIS__ ") %>%
+
+        # add spaces arrouond (single occurences of) punctuations
+        stringr::str_replace_all(regex, " \\1 ") %>%
+
+        # remove extra spaces
+        stringr::str_squish()
 }

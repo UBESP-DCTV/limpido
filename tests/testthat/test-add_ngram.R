@@ -32,7 +32,7 @@ test_that("add_ngram() default method work properly", {
 test_that("add_ngram() correct dictionary", {
     expect_equal(
         add_ngram(test_mixdb, 2)[["x"]][[1]],
-        c("foo" = 2, "notes" = 1, "foo[GRAM]notes" = 9)
+        c("foo" = 2, "notes" = 1, "foo__GRAM__notes" = 9)
     )
 })
 
@@ -51,21 +51,21 @@ test_that("add_bigram works on a small example", {
     expect_equivalent(unclass(get_dictionary(ex_bigram)), 1:7) # 3 + 4
     expect_equal(
         names(ex_bigram[["x"]][[1]]),
-        c("a", "b", "b", "a[GRAM]b", "b[GRAM]b")
+        c("a", "b", "b", "a__GRAM__b", "b__GRAM__b")
     )
     expect_equal(
         names(ex_bigram[["x"]][[2]]),
         c("a", "b", "c", "c", "c", "c",
-          "c[GRAM]c", "c[GRAM]c", "c[GRAM]c", "a[GRAM]b", "b[GRAM]c")
+          "c__GRAM__c", "c__GRAM__c", "c__GRAM__c", "a__GRAM__b", "b__GRAM__c")
     )
     expect_equal(
         names(get_dictionary(ex_bigram)),
-        c("c", "b", "c[GRAM]c", "a", "a[GRAM]b", "b[GRAM]b", "b[GRAM]c")
+        c("c", "b", "c__GRAM__c", "a", "a__GRAM__b", "b__GRAM__b", "b__GRAM__c")
     )
     expect_equivalent(
         unclass(get_frequencies(get_dictionary(ex_bigram))),
-        c("c" = 4, "b" = 3, "c[GRAM]c" = 3, "a" = 2, "a[GRAM]b" = 2,
-          "b[GRAM]b" = 1, "b[GRAM]c" = 1)
+        c("c" = 4, "b" = 3, "c__GRAM__c" = 3, "a" = 2, "a__GRAM__b" = 2,
+          "b__GRAM__b" = 1, "b__GRAM__c" = 1)
     )
 
 })
@@ -84,26 +84,26 @@ test_that("add_trigram works on a small example", {
     expect_equivalent(unclass(get_dictionary(ex_trigram)), 1:11) # 3 + 4 + 4
     expect_equal(
         names(ex_trigram[["x"]][[1]]),
-        c("a", "b", "b", "a[GRAM]b", "b[GRAM]b", "a[GRAM]b[GRAM]b")
+        c("a", "b", "b", "a__GRAM__b", "b__GRAM__b", "a__GRAM__b__GRAM__b")
     )
     expect_equal(
         names(ex_trigram[["x"]][[2]]),
         c("a", "b", "c", "c", "c", "c",
-          "c[GRAM]c", "c[GRAM]c", "c[GRAM]c", "c[GRAM]c[GRAM]c",
-          "c[GRAM]c[GRAM]c", "a[GRAM]b", "b[GRAM]c", "a[GRAM]b[GRAM]c",
-          "b[GRAM]c[GRAM]c")
+          "c__GRAM__c", "c__GRAM__c", "c__GRAM__c", "c__GRAM__c__GRAM__c",
+          "c__GRAM__c__GRAM__c", "a__GRAM__b", "b__GRAM__c", "a__GRAM__b__GRAM__c",
+          "b__GRAM__c__GRAM__c")
     )
     expect_equal(
         names(get_dictionary(ex_trigram)),
-        c("c", "b", "c[GRAM]c", "a", "a[GRAM]b", "c[GRAM]c[GRAM]c",
-          "a[GRAM]b[GRAM]b", "a[GRAM]b[GRAM]c", "b[GRAM]b", "b[GRAM]c",
-          "b[GRAM]c[GRAM]c")
+        c("c", "b", "c__GRAM__c", "a", "a__GRAM__b", "c__GRAM__c__GRAM__c",
+          "a__GRAM__b__GRAM__b", "a__GRAM__b__GRAM__c", "b__GRAM__b", "b__GRAM__c",
+          "b__GRAM__c__GRAM__c")
     )
     expect_equivalent(
         unclass(get_frequencies(get_dictionary(ex_trigram))),
-        c("c" = 4, "b" = 3, "c[GRAM]c" = 3, "a" = 2, "a[GRAM]b" = 2,
-          "c[GRAM]c[GRAM]c" = 2, "a[GRAM]b[GRAM]b" = 1, "b[GRAM]b" = 1,
-          "b[GRAM]c" = 1, "a[GRAM]b[GRAM]c" = 1, "b[GRAM]c[GRAM]c" = 1)
+        c("c" = 4, "b" = 3, "c__GRAM__c" = 3, "a" = 2, "a__GRAM__b" = 2,
+          "c__GRAM__c__GRAM__c" = 2, "a__GRAM__b__GRAM__b" = 1, "b__GRAM__b" = 1,
+          "b__GRAM__c" = 1, "a__GRAM__b__GRAM__c" = 1, "b__GRAM__c__GRAM__c" = 1)
     )
 })
 
@@ -116,5 +116,5 @@ test_that("add_ngram() works on test_tbl", {
     expect_equal(test_dict_add_gram[[1L]], 1L)
     expect_equal(test_dict_add_gram[[2L]], 2L)
     expect_equal(names(test_dict_add_gram[1L]), "2")
-    expect_equal(names(test_dict_add_gram[2L]), "2[GRAM]2")
+    expect_equal(names(test_dict_add_gram[2L]), "2__GRAM__2")
 })

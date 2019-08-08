@@ -41,7 +41,7 @@ create_ngram.character <- function(x, n_gram = 2L) {
         indices <- purrr::map(seq_len(n_ngrams), ~ .:(. + i - 1L))
 
         tokens <- purrr::map_chr(indices, ~ {
-            paste0(x[.x], collapse = "[GRAM]")
+            paste0(x[.x], collapse = "__GRAM__")
         })
 
         dictionaries[[i - 1L]] <- dictionary(tokens) + skip

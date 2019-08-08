@@ -1,3 +1,4 @@
+* Add `code_num` to coding numbers in a corpus
 * Add `expand_punctuations()` to separate words from other characters
 * Added `create_ngram()` and `add_ngram()` to add engram to a `mixdb`.
   `create_ngram()` can be usefull stand-alone too.

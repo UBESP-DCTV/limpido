@@ -5,15 +5,12 @@
 \alias{expand_punctuations.character}
 \title{expand punctuation}
 \usage{
-expand_punctuations(text, regex)
+expand_punctuations(text)
 
-\method{expand_punctuations}{character}(text, regex = "\\\\W+")
+\method{expand_punctuations}{character}(text)
 }
 \arguments{
 \item{text}{(chr) vector}
-
-\item{regex}{(chr) representing the regular expression to use to
-match words}
 }
 \value{
 a character vector with all punctuation, sourrendered by

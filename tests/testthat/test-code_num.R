@@ -1,17 +1,24 @@
+reference <- c("1", "12", "abc 12", "abc12", "abc.12", "l'82",
+                   "12.3", "a2b1", "34 a2b1 12")
+
 test_that("coding numbers works", {
-    reference <- c("1", "12", "abc 12", "abc12", "abc.12", "l'82")
-    target <- c(
-        "[NUM]", "[NUM]", "abc [NUM]", "abc[NUM]", "abc.[NUM]",
-        "l'[NUM]"
+    target_default <- c(
+        "__NUM__", "__NUM__", "abc __NUM__", "abc__NUM__", "abc.__NUM__",
+        "l'__NUM__", "__NUM__", "a__NUM__b__NUM__",
+        "__NUM__ a__NUM__b__NUM__ __NUM__"
     )
 
-    expect_equal(code_num(reference), target)
+    expect_equal(code_num(reference), target_default)
 })
 
 test_that("can admit words with numbers", {
-    expect_equal(code_num("a2b1"), "a[NUM]b[NUM]")
+    target_ignore <- c(
+        "__NUM__", "__NUM__", "abc __NUM__", "abc12", "abc.__NUM__",
+        "l'__NUM__", "__NUM__", "a2b1", "__NUM__ a2b1 __NUM__"
+    )
+
     expect_equal(
-        code_num("34 a2b1 12", ignore_in_word = TRUE),
-        "[NUM] a2b1 [NUM]"
+        code_num(reference, ignore_in_word = TRUE),
+        target_ignore
     )
 })

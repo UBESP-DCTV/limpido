@@ -4,7 +4,7 @@ test_that("create_ngram for basic structure", {
     expect_is(test_base_ngram, "dictionary")
     expect_named(
         test_base_ngram,
-        c("4[GRAM]4", "3[GRAM]3", "1[GRAM]2", "2[GRAM]2", "2[GRAM]4", "4[GRAM]3")
+        c("4__GRAM__4", "3__GRAM__3", "1__GRAM__2", "2__GRAM__2", "2__GRAM__4", "4__GRAM__3")
     )
     expect_equivalent(unclass(test_base_ngram), 1:6 + 4L)
     expect_equivalent(
@@ -18,8 +18,8 @@ test_that("create_ngram for mixdb", {
     expect_is(create_ngram(test_mixdb), "dictionary")
     expect_named(
         create_ngram(test_mixdb),
-        c('annotated[GRAM]foo', 'another[GRAM]notes', 'bar[GRAM]notes',
-          'foo[GRAM]notes')
+        c('annotated__GRAM__foo', 'another__GRAM__notes', 'bar__GRAM__notes',
+          'foo__GRAM__notes')
     )
     expect_setequal(create_ngram(test_mixdb), 1:4 + 5L)
     expect_true(all(
@@ -45,10 +45,10 @@ test_that("bug molteplicità singolo documento", {
         )
     )
 
-    expect_equal(get_frequencies(create_ngram(test_bug_1))[["c[GRAM]c"]], 3L)
-    expect_equal(get_frequencies(create_ngram(test_bug_1))[["a[GRAM]b"]], 2L)
-    expect_equal(get_frequencies(create_ngram(test_bug_1))[["b[GRAM]b"]], 1L)
-    expect_equal(get_frequencies(create_ngram(test_bug_1))[["b[GRAM]c"]], 1L)
+    expect_equal(get_frequencies(create_ngram(test_bug_1))[["c__GRAM__c"]], 3L)
+    expect_equal(get_frequencies(create_ngram(test_bug_1))[["a__GRAM__b"]], 2L)
+    expect_equal(get_frequencies(create_ngram(test_bug_1))[["b__GRAM__b"]], 1L)
+    expect_equal(get_frequencies(create_ngram(test_bug_1))[["b__GRAM__c"]], 1L)
 })
 
 

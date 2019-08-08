@@ -7,7 +7,7 @@
 \usage{
 code_num(text, code, ignore_in_word)
 
-\method{code_num}{character}(text, code = "[NUM]",
+\method{code_num}{character}(text, code = "__NUM__",
   ignore_in_word = FALSE)
 }
 \arguments{

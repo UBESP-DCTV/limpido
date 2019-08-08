@@ -49,9 +49,10 @@ test_that("add id to meta and not gender to data", {
   out_a <- mixdb(test_db, meta_vars(id, gender))
   expect_named(attr(out_a, "meta"), c("id", "gender", "notes", "class"))
   expect_length(out_a[["x"]][[1]], 2L)
+
   expect_false(any(stringr::str_detect(
     names(out_a[["x"]][[1]]),
-    "\\[sep\\]"
+    "__SEP__"
   )))
 })
 
@@ -61,5 +62,18 @@ test_that("works with added columns", {
   expect_named(attr(out_b, "meta"), c("id", "notes", "gender", "class"))
   expect_length(out_b[["x"]][[1]], 4L)
   expect_false(any(stringr::str_detect(names(out_b[["x"]][[1]]), " ")))
-  expect_equal(names(out_b[["x"]][[1L]]), c("foo", "notes", "[SEP]", "male"))
+  expect_equal(names(out_b[["x"]][[1L]]), c("foo", "notes", "__SEP__", "male"))
+})
+
+
+test_that("correct with only symbols", {
+    expect_equal(
+      mixdb(tibble::tibble(class = 1, a = "+"))[["x"]][[1]],
+      c("+" = 1L)
+    )
+
+    expect_equal(
+      mixdb(tibble::tibble(class = 1, a = "__NUM__ ;"))[["x"]][[1]],
+      c("__NUM__" = 1L, ";" = 2L)
+    )
 })
