@@ -1,3 +1,5 @@
+* Add function `setup_input_data()` to initial setup for the training 
+
 # limpido 0.1.0
 
 * Add script in `data-raw` to create the pretrained embeddings from 
