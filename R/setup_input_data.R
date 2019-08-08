@@ -60,7 +60,7 @@
 #'    - **train_x**: list of named integers representig the training set
 #'    - **validation_x**: list of named integers representig the
 #'      validation set
-#'    - **embedding_matrix**: the embedding matrix
+#'    - **embedding_matrix**: a list containing the embedding matrix
 #'      (`max_words` + 1 rows, `embedding_dim` columns)
 #'    - **random_seed**: the seed used
 #'    - values of all the imput parameters
@@ -227,7 +227,7 @@ setup_input_data <- function(
     list(
         train_x = train_x,
         train_y = train_y,
-        embedding_matrix = embedding_matrix,
+        embedding_matrix = list(embedding_matrix),
         random_seed = random_seed,
         validation_len = validation_len,
         max_words = max_words,

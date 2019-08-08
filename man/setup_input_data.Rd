@@ -53,7 +53,7 @@ a named list including:
 \item \strong{train_x}: list of named integers representig the training set
 \item \strong{validation_x}: list of named integers representig the
 validation set
-\item \strong{embedding_matrix}: the embedding matrix
+\item \strong{embedding_matrix}: a list containing the embedding matrix
 (\code{max_words} + 1 rows, \code{embedding_dim} columns)
 \item \strong{random_seed}: the seed used
 \item values of all the imput parameters
