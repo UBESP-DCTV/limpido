@@ -1,3 +1,5 @@
+# limpido 0.1.0
+
 * Add script in `data-raw` to create the pretrained embeddings from 
   the full pedianet db.
 * Add `prepare_db()` to convert the final pedianet dataframe to a
