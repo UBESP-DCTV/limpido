@@ -6,7 +6,8 @@
 #' @param final_pedia_db dataframe with the final version of
 #'     the full pedianet db.
 #'
-#' @return
+#' @return (chr) Character vector with each element a cell of the
+#'     `final_pedia_db` preprocessed
 #' @export
 #'
 #' @examples
@@ -20,7 +21,7 @@ prepare_db <- function(final_pedia_db) {
     on.exit(usethis::ui_done("DB preparation finished."))
 
 
-    only_text <- dataset_final %>%
+    only_text <- final_pedia_db %>%
         dplyr::select(diagnosi1:risultato_8) %>%
         dplyr::mutate_all(stringr::str_to_lower) %>%
         tidyr::gather() %>%
