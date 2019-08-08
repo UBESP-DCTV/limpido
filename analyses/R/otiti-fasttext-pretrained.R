@@ -51,6 +51,10 @@ if (file.exists(cache_1gram)) {
         # HERE WE SEPARATE PUNCTUATIONS AND ADD TAGS FOR NUMBERS
         mutate_if(is.character, code_num) %>%
         mutate_if(is.character, expand_punctuations) %>%
+        mutate_if(is.character, stringr::str_replace_all, c(
+           "__na__"  =  "__NA__",
+          "__gram__" = "__GRAM__"
+        )) %>%
         mutate_if(is.character, replace_na, "__NA__") %>%
         mixdb(meta_vars(
             set, id_medico, guidpaziente, datacontatto, oracontatto,
@@ -121,6 +125,10 @@ tibble(
     mutate(p = n/sum(n)) %>%
     ggplot(aes(x = class, y = p, fill = set)) +
     geom_bar(stat = "identity", position = position_dodge())
+
+
+mean_train_len <- mean(map_int(train_x, length))
+mean_validation_len <- mean(map_int(validation_x, length))
 
 train_x  <- pad_sequences(train_x,
     maxlen = maxlen,
@@ -208,6 +216,8 @@ model <- keras_model_sequential() %>%
     layer_dense(units = 32L, activation = "relu") %>%
     layer_dense(units = 6L, activation = "sigmoid")
 
+architecture <- "trainable embedding - flatten - 32 dense relu - 6 dense sigmoid"
+
 summary(model)
 
 model %>% compile(
@@ -243,8 +253,6 @@ notes_db <- as.data.frame(history) %>%
     filter(epoch == 15) %>%
     mutate_if(is.numeric, round, 4)
 
-mean_train_len <- mean(map_int(train_x, length))
-mean_validation_len <- mean(map_int(validation_x, length))
 
 plot(history) +
     xlab("Epoch") +
