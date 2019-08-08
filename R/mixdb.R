@@ -28,11 +28,6 @@
 #' @param .meta_vars optional list of (unquoted) columns' names generated
 #'   by \code{\link{meta_vars}()}, and representing metadata of
 #'   interest. (see **details** for specs)
-#' @param lowercase (lgl, default = TRUE) perform lowercase
-#'     transformaiton?
-#' @param locale (chr, default = "en") Locale to use for translations.
-#'     Defaults to "en" (English) to ensure consistent default ordering
-#'     across platforms.
 #'
 #' @return an object of class \code{\link[limpido]{mixdb}}, with an
 #'   attribute **meta** of class [tibble][tibble::tibble-package]
@@ -56,21 +51,13 @@
 #' mixdb(test, meta_vars(id, gender))
 #' mixdb(test, meta_vars(id))
 #'
-mixdb <- function(.data,
-                  .meta_vars = NULL,
-                  lowercase = TRUE,
-                  locale = "en"
-) {
+mixdb <- function(.data, .meta_vars = NULL) {
     UseMethod("mixdb", .data)
 }
 
 #' @rdname mixdb
 #' @export
-mixdb.default <- function(.data,
-                          .meta_vars = NULL,
-                          lowercase = TRUE,
-                          locale = "en"
-) {
+mixdb.default <- function(.data, .meta_vars = NULL) {
     ui_info(
         "{ui_field('.data')} must inherits from {ui_value('data.frame')}"
     )
@@ -85,18 +72,9 @@ mixdb.default <- function(.data,
 
 #' @rdname mixdb
 #' @export
-mixdb.data.frame <- function(.data,
-                             .meta_vars = NULL,
-                             lowercase = TRUE,
-                             locale = "en"
-) {
+mixdb.data.frame <- function(.data, .meta_vars = NULL) {
     # define the textual base dataset: not meta character columns
     text_df <- text_no_meta(.data, .meta_vars)
-    if (lowercase) {
-        text_df <- dplyr::mutate_all(text_df, stringr::str_to_lower,
-            locale = locale
-        )
-    }
 
     # define the meta dataset (including text and classes)
     meta_df <- .data %>%
@@ -108,7 +86,7 @@ mixdb.data.frame <- function(.data,
 
     # extract words (token will be applyed later, eventualy)
     text_df <- dplyr::mutate_all(text_df,
-        stringi::stri_extract_all_words
+        ~stringr::str_split(., "\\s+")
     )
 
     text <- if (length(text_df) > 1) {

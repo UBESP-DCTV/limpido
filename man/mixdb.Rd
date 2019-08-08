@@ -6,13 +6,11 @@
 \alias{mixdb.data.frame}
 \title{mixdb object}
 \usage{
-mixdb(.data, .meta_vars = NULL, lowercase = TRUE, locale = "en")
+mixdb(.data, .meta_vars = NULL)
 
-\method{mixdb}{default}(.data, .meta_vars = NULL, lowercase = TRUE,
-  locale = "en")
+\method{mixdb}{default}(.data, .meta_vars = NULL)
 
-\method{mixdb}{data.frame}(.data, .meta_vars = NULL, lowercase = TRUE,
-  locale = "en")
+\method{mixdb}{data.frame}(.data, .meta_vars = NULL)
 }
 \arguments{
 \item{.data}{(data frame) of data. (see \strong{details} for specs)}
@@ -20,13 +18,6 @@ mixdb(.data, .meta_vars = NULL, lowercase = TRUE, locale = "en")
 \item{.meta_vars}{optional list of (unquoted) columns' names generated
 by \code{\link{meta_vars}()}, and representing metadata of
 interest. (see \strong{details} for specs)}
-
-\item{lowercase}{(lgl, default = TRUE) perform lowercase
-transformaiton?}
-
-\item{locale}{(chr, default = "en") Locale to use for translations.
-Defaults to "en" (English) to ensure consistent default ordering
-across platforms.}
 }
 \value{
 an object of class \code{\link[limpido]{mixdb}}, with an

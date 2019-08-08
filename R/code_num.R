@@ -19,14 +19,14 @@ code_num <- function(text, code, ignore_in_word) {
 #' @export
 code_num.character <- function(
     text,
-    code = "[NUM]",
+    code = "__NUM__",
     ignore_in_word = FALSE
 ) {
     if (ignore_in_word) {
-        match <- "(^.{0}|\\W)(\\d+)(\\W|.{0}$)"
-        replacement <- paste0("\\1", code, "\\3")
+        match <- "(^.{0}|\\W)(\\d+)(\\.\\d+)*(\\W|.{0}$)"
+        replacement <- paste0("\\1", code, "\\4")
     } else {
-        match <- "\\d+"
+        match <- "\\d+(\\.\\d+)*"
         replacement <- code
     }
     stringr::str_replace_all(text, match, replacement)

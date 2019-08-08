@@ -10,7 +10,7 @@ Authors@R:
         ),
         person(given = "Elisa",
                family = "Barbieri",
-               role = "aut",
+               role = "ctb",
                email = "elisa.barbieri@unipd.it"
         ),
         person(given = "Carlo",
@@ -24,7 +24,7 @@ Authors@R:
                email = "dario.gregori@unipd.it"
         )
     )
-Description: What the package does (one paragraph).
+Description: The goal of the package `limpido` is to develop a "LearnIng Machine for PedIatric Detection of Otitis".
 License: GPL-3
 Depends: 
     R (>= 3.1)
