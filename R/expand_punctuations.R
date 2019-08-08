@@ -18,7 +18,7 @@ expand_punctuations.character <- function(text) {
 
     # the aim is to shrink punctuation repetitions
 
-    regex <- paste0("(\\W)\\1*")
+    regex <- "(\\W)\\1*"
 
 
     text %>%

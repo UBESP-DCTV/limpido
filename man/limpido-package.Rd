@@ -6,7 +6,7 @@
 \alias{limpido-package}
 \title{limpido: LearnIng Machine for PedIatric Detection of Otitis}
 \description{
-What the package does (one paragraph).
+The goal of the package `limpido` is to develop a "LearnIng Machine for PedIatric Detection of Otitis".
 }
 \seealso{
 Useful links:
@@ -19,13 +19,9 @@ Useful links:
 \author{
 \strong{Maintainer}: Corrado Lanera \email{corrado.lanera@gmail.com}
 
-Authors:
-\itemize{
-  \item Elisa Barbieri \email{elisa.barbieri@unipd.it}
-}
-
 Other contributors:
 \itemize{
+  \item Elisa Barbieri \email{elisa.barbieri@unipd.it} [contributor]
   \item Carlo Giacquinto \email{carlo.giaquinto@unipd.it} [contributor]
   \item Dario Gregori \email{dario.gregori@unipd.it} [contributor]
 }
