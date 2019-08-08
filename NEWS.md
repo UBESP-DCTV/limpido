@@ -1,3 +1,11 @@
+* Add `prepare_db()` to convert the final pedianet dataframe to a
+  character vector usefull for FastText
+* incorporate explicit `__NA__` tag for missing entries in the creation
+  of a `mixdb`
+* Change tags convention from `[<tag>]` to `__<tag>__`
+
+# limpido 0.0.0.9002
+
 * Add `code_num` to coding numbers in a corpus
 * Add `expand_punctuations()` to separate words from other characters
 * Added `create_ngram()` and `add_ngram()` to add engram to a `mixdb`.
