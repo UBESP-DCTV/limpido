@@ -72,8 +72,17 @@ test_that("correct with only symbols", {
       c("+" = 1L)
     )
 
-    expect_equal(
-      mixdb(tibble::tibble(class = 1, a = "__NUM__ ;"))[["x"]][[1]],
-      c("__NUM__" = 1L, ";" = 2L)
+   mix_sym <- mixdb(tibble::tibble(
+       class = 1:4,
+       a = c("__NUM__ a", "__NUM__ ; b", "__NUM__ ;", NA)
+    ))[["x"]]
+
+    expect_equal(mix_sym,
+      list(
+        c("__NUM__" = 1L, "a" = 4L),
+        c("__NUM__" = 1L, ";" = 2, "b" = 5L),
+        c("__NUM__" = 1L, ";" = 2L),
+        c("__NA__" = 3L)
+      )
     )
 })

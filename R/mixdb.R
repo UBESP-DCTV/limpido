@@ -85,9 +85,9 @@ mixdb.data.frame <- function(.data, .meta_vars = NULL) {
         )
 
     # extract words (token will be applyed later, eventualy)
-    text_df <- dplyr::mutate_all(text_df,
-        ~stringr::str_split(., "\\s+")
-    )
+    text_df <- text_df %>%
+        dplyr::mutate_all(tidyr::replace_na, "__NA__") %>%
+        dplyr::mutate_all(stringr::str_split, "\\s+")
 
     text <- if (length(text_df) > 1) {
         purrr::reduce(text_df, paste_sep)

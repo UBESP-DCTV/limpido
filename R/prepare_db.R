@@ -21,8 +21,7 @@ prepare_db <- function(final_pedia_db) {
     on.exit(usethis::ui_done("DB preparation finished."))
 
 
-    only_text <- final_pedia_db %>%
-        dplyr::select(diagnosi1:risultato_8) %>%
+    only_text <- final_pedia_db(diagnosi1:risultato_8) %>%
         dplyr::mutate_all(stringr::str_to_lower) %>%
         tidyr::gather() %>%
         dplyr::distinct() %>%

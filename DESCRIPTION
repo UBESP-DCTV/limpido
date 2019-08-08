@@ -37,7 +37,8 @@ Imports:
     purrr,
     furrr,
     stringi,
-    stringr
+    stringr,
+    tidyr
 Suggests: 
     covr (>= 3.2.1),
     spelling (>= 2.0),
