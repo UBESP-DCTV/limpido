@@ -47,15 +47,9 @@ if (file.exists(cache_1gram)) {
         filter(!is.na(class))
 
     mixdb_otiti_tagged <- gold_otiti %>%
-        mutate_if(is.character, stringr::str_to_lower) %>%
         # HERE WE SEPARATE PUNCTUATIONS AND ADD TAGS FOR NUMBERS
         mutate_if(is.character, code_num) %>%
         mutate_if(is.character, expand_punctuations) %>%
-        mutate_if(is.character, stringr::str_replace_all, c(
-           "__na__"  =  "__NA__",
-          "__gram__" = "__GRAM__"
-        )) %>%
-        mutate_if(is.character, replace_na, "__NA__") %>%
         mixdb(meta_vars(
             set, id_medico, guidpaziente, datacontatto, oracontatto,
             data_nascita, sesso
