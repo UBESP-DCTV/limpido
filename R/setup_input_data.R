@@ -39,6 +39,8 @@
 #'     in the vocabulary, plus 1 for the "out of vocabulary" words)
 #' @param data_path (chr) path to the folder in which find the data
 #'     needed for the setup
+#' @param output_path (chr) path to the folder in which to save to
+#'     output objects
 #' @param random_seed (int, default is random) seed for the random
 #'     computation
 #' @param maxlen (chr, defaul = 300L) Maximum number of words to
@@ -89,6 +91,7 @@ setup_input_data <- function(
     batch_size = 8L,
     epochs = 15L,
     data_path = here::here("../data/"),
+    output_path = here::here("../../output/"),
     random_seed = sample.int(1e4, 1),
     mixdb_path = file.path(data_path, "mixdb_otiti_tagged.rds"),
     verbose = TRUE,
@@ -262,13 +265,12 @@ setup_input_data <- function(
         batch_size = batch_size,
         epochs = epochs,
         data_path = data_path,
+        output_path = output_path,
         random_seed = random_seed,
         mixdb_path = mixdb_path,
         verbose = verbose,
         loss      = loss,
         metrics   = metrics,
         optimizer = optimizer
-
-        )
-
+      )
 }

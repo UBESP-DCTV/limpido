@@ -7,6 +7,7 @@
 setup_input_data(validation_len = 300L, max_words = Inf,
   embedding_dim = 300L, maxlen = c("300", "100"), batch_size = 8L,
   epochs = 15L, data_path = here::here("../data/"),
+  output_path = here::here("../../output/"),
   random_seed = sample.int(10000, 1), mixdb_path = file.path(data_path,
   "mixdb_otiti_tagged.rds"), verbose = TRUE,
   loss = "categorical_crossentropy", metrics = "categorical_accuracy",
@@ -39,6 +40,9 @@ dataset for its training.}
 
 \item{data_path}{(chr) path to the folder in which find the data
 needed for the setup}
+
+\item{output_path}{(chr) path to the folder in which to save to
+output objects}
 
 \item{random_seed}{(int, default is random) seed for the random
 computation}
