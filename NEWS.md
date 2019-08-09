@@ -1,3 +1,7 @@
+# limpido 0.1.1
+
+* Add function `save_all_models()` to store al the relevant information
+  and plot from the trained model.
 * Add function `setup_input_data()` to initial setup for the training 
 
 # limpido 0.1.0
