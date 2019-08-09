@@ -6,7 +6,8 @@
 \alias{limpido-package}
 \title{limpido: LearnIng Machine for PedIatric Detection of Otitis}
 \description{
-The goal of the package `limpido` is to develop a "LearnIng Machine for PedIatric Detection of Otitis".
+The goal of the package `limpido` is to develop a
+    "LearnIng Machine for PedIatric Detection of Otitis".
 }
 \seealso{
 Useful links:
