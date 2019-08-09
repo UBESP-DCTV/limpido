@@ -55,18 +55,32 @@
 #'     with the training and the validation data.
 #' @param verbose (lgl, default TRUE) should info on the progress
 #'     displayed?
+#' @param loss (chr, default "categorical_crossentropy") the loss
+#'     function for the model
+#' @param metrics (chr, default "categorical_accuracy") the metrics to
+#'     estimate the performance
+#' @param optimizer (chr, dafault "adam") the optimizer for the DL model
 #'
 #' @return a named list including:
 #'    - **train_x**: list of named integers representig the training set
 #'    - **validation_x**: list of named integers representig the
 #'      validation set
+#'    - **train_y**: response variable for training (+ train-validation)
+#'      set
+#'    - **validation_y**: response variable for validation
+#'      (- train-validation) set
 #'    - **embedding_matrix**: a list containing the embedding matrix
 #'      (`max_words` + 1 rows, `embedding_dim` columns)
-#'    - **random_seed**: the seed used
+#'    - **random_seed**: the seed used,
+#'    - **n_class**: the number of classes,
+#'    - **mean_train_len**: the mean length of a training document,
+#'    - **mean_validation_len**: the mean length of a validation
+#'      document,
+#'    - **train_len**: number of observation in the trainin gset (note:
+#'      the number of observation in the validation set is one of the
+#'      paramenter passed to the function)
 #'    - values of all the imput parameters
 #' @export
-#'
-#' @examples
 setup_input_data <- function(
     validation_len = 300L,
     max_words = Inf,
@@ -77,7 +91,11 @@ setup_input_data <- function(
     data_path = here::here("../data/"),
     random_seed = sample.int(1e4, 1),
     mixdb_path = file.path(data_path, "mixdb_otiti_tagged.rds"),
-    verbose = TRUE
+    verbose = TRUE,
+    loss      = "categorical_crossentropy",
+    metrics   = "categorical_accuracy",
+    optimizer = "adam"
+
 ) {
 
     maxlen <- match.arg(maxlen)
@@ -227,9 +245,17 @@ setup_input_data <- function(
     list(
         train_x = train_x,
         train_y = train_y,
+        validation_x = validation_x,
+        validation_y = validation_y,
         embedding_matrix = list(embedding_matrix),
+        mean_train_len = mean_train_len,
+        mean_validation_len = mean_validation_len,
+        pedia_dict_size = max(get_dictionary(mixdb_otiti_tagged)),
+        corpus_dict_size = length(words),
+        n_class = n_class,
         random_seed = random_seed,
         validation_len = validation_len,
+        train_len = sets_len - validation_len,
         max_words = max_words,
         embedding_dim = embedding_dim,
         maxlen = maxlen,
@@ -238,7 +264,11 @@ setup_input_data <- function(
         data_path = data_path,
         random_seed = random_seed,
         mixdb_path = mixdb_path,
-        verbose = verbose
+        verbose = verbose,
+        loss      = loss,
+        metrics   = metrics,
+        optimizer = optimizer
+
         )
 
 }

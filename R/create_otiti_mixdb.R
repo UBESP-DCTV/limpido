@@ -8,8 +8,6 @@
 #'
 #' @return invisibly `TRUE``
 #' @export
-#'
-#' @examples
 create_otiti_mixdb <- function(
     data_path = here::here("../../"),
     pedia_gold_path = file.path(data_path, "pedia_gold_otiti.rds"),

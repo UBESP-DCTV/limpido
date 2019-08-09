@@ -40,7 +40,8 @@ Imports:
     stringr (>= 1.4.0),
     tibble (>= 2.0.0),
     tidyr (>= 0.8.3),
-    usethis (>= 1.5.1)
+    usethis (>= 1.5.1),
+    glue
 Suggests: 
     covr (>= 3.2.1),
     roxygen2 (>= 6.1.1),

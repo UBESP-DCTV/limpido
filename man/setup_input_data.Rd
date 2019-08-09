@@ -8,7 +8,9 @@ setup_input_data(validation_len = 300L, max_words = Inf,
   embedding_dim = 300L, maxlen = c("300", "100"), batch_size = 8L,
   epochs = 15L, data_path = here::here("../data/"),
   random_seed = sample.int(10000, 1), mixdb_path = file.path(data_path,
-  "mixdb_otiti_tagged.rds"), verbose = TRUE)
+  "mixdb_otiti_tagged.rds"), verbose = TRUE,
+  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
+  optimizer = "adam")
 }
 \arguments{
 \item{validation_len}{(int, default = 300L) Number of example in the
@@ -46,6 +48,14 @@ with the training and the validation data.}
 
 \item{verbose}{(lgl, default TRUE) should info on the progress
 displayed?}
+
+\item{loss}{(chr, default "categorical_crossentropy") the loss
+function for the model}
+
+\item{metrics}{(chr, default "categorical_accuracy") the metrics to
+estimate the performance}
+
+\item{optimizer}{(chr, dafault "adam") the optimizer for the DL model}
 }
 \value{
 a named list including:
@@ -53,9 +63,20 @@ a named list including:
 \item \strong{train_x}: list of named integers representig the training set
 \item \strong{validation_x}: list of named integers representig the
 validation set
+\item \strong{train_y}: response variable for training (+ train-validation)
+set
+\item \strong{validation_y}: response variable for validation
+(- train-validation) set
 \item \strong{embedding_matrix}: a list containing the embedding matrix
 (\code{max_words} + 1 rows, \code{embedding_dim} columns)
-\item \strong{random_seed}: the seed used
+\item \strong{random_seed}: the seed used,
+\item \strong{n_class}: the number of classes,
+\item \strong{mean_train_len}: the mean length of a training document,
+\item \strong{mean_validation_len}: the mean length of a validation
+document,
+\item \strong{train_len}: number of observation in the trainin gset (note:
+the number of observation in the validation set is one of the
+paramenter passed to the function)
 \item values of all the imput parameters
 }
 }
