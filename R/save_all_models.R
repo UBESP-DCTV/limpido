@@ -37,7 +37,7 @@ save_all_models <- function(
         p_path <- file.path(output_path,
             glue::glue("keras-gg-{current}.png")
         )
-        ggplot2::ggsave(gg_file, plot, width = 8.3, height = 11.7)
+        ggplot2::ggsave(p_path, plot, width = 8.3, height = 11.7)
     }
 
     invisible(TRUE)

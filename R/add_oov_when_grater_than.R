@@ -1,4 +1,4 @@
-add_oov_when_grater_than <- function(.list, max_words) {
+add_oov_when_greater_than <- function(.list, max_words) {
     purrr::map(.list, ~{
         is_oov <- .x > max_words
         .x[is_oov] <- max_words + 1L

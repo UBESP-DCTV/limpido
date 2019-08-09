@@ -42,7 +42,7 @@ gg_history <- function(
                 "Loss: {str_replace(params$loss, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
                 "Optimizer: {str_replace(params$optimizer, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
                 "Optimization metric: {str_replace(params$metrics, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
-                "Overall time ellapsed (fit-only): {round(params$train_time, 2)} {attr(params$train_time, 'units')}"
+                "Overall time ellapsed (fit-only): {round(train_time, 2)} {attr(train_time, 'units')}"
             )
         ) +
         ggplot2::geom_text(data = notes_db, ggplot2::aes(
