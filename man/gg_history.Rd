@@ -4,12 +4,15 @@
 \alias{gg_history}
 \title{Custom ggplot for keras' historys}
 \usage{
-gg_history(keras_plot, history, params, train_time = lubridate::now())
+gg_history(keras_plot, history, architecture, params,
+  train_time = lubridate::now())
 }
 \arguments{
 \item{keras_plot}{a keras plot object}
 
 \item{history}{a [keras]{history} object}
+
+\item{architecture}{(chr) a description of the architecture used}
 
 \item{params}{output of \link{setup_input_data}}
 

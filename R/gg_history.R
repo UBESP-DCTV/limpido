@@ -2,6 +2,7 @@
 #'
 #' @param keras_plot a keras plot object
 #' @param history a [keras]{history} object
+#' @param architecture (chr) a description of the architecture used
 #' @param params output of [setup_input_data]
 #' @param train_time (POSIXct, dafault `lubridate::now()`) time to
 #'    include in the plot.
@@ -9,7 +10,11 @@
 #' @return a [ggplot2]{ggplot} object
 #' @export
 gg_history <- function(
-    keras_plot, history, params, train_time = lubridate::now()
+    keras_plot,
+    history,
+    architecture,
+    params,
+    train_time = lubridate::now()
 ) {
 
     notes_db <- as.data.frame(history) %>%
@@ -21,6 +26,7 @@ gg_history <- function(
         ggplot2::ggtitle(
             "Loss and categorical accuracy by epochs for the Otiti's training and validation set.",
             subtitle = glue::glue(
+                "Architecture: {architecture}\n",
                 "Full exploration ({params$train_len + params$validation_len} observation overall)\n",
                 "Training set: {params$train_len} (random seed: {params$random_seed})\n",
                 "Average training sequence length: {round(params$mean_train_len, 2)}\n",
