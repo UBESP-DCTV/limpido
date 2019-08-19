@@ -5,11 +5,11 @@
 \title{Setup for DL}
 \usage{
 setup_input_data(validation_len = 300L, max_words = Inf,
-  embedding_dim = 300L, maxlen = c("300", "100"), batch_size = 8L,
-  epochs = 15L, data_path = here::here("../data/"),
+  embedding_dim = c("300", "100"), maxlen = 300L, batch_size = 8L,
+  epochs = 15L, data_path = here::here("../../data/"),
   output_path = here::here("../../output/"),
-  random_seed = sample.int(10000, 1), mixdb_path = file.path(data_path,
-  "mixdb_otiti_tagged.rds"), verbose = TRUE,
+  random_seed = sample.int(10000, 1),
+  mixdb_name = "mixdb_otiti_tagged.rds", verbose = TRUE,
   loss = "categorical_crossentropy", metrics = "categorical_accuracy",
   optimizer = "adam")
 }
@@ -47,8 +47,8 @@ output objects}
 \item{random_seed}{(int, default is random) seed for the random
 computation}
 
-\item{mixdb_path}{(chr) the path to the RDS file containing \link{mixdb}
-with the training and the validation data.}
+\item{mixdb_name}{(chr) name (within \code{data_path} to the RDS file
+containing \link{mixdb} with the training and the validation data.}
 
 \item{verbose}{(lgl, default TRUE) should info on the progress
 displayed?}

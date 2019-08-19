@@ -8,26 +8,29 @@ library(keras)
 params <- setup_input_data(
     validation_len = 300L,
     max_words = Inf,
-    embedding_dim  = 300L,
-    maxlen = 300L,
-    batch_size = 8L,
-    epochs = 15L,
-    data_path   = here::here("../data/"),
+    embedding_dim  = "300",
+    maxlen = 500L,
+    data_path   = here::here("../../data/"),
     output_path = here::here("../../output/"),
     random_seed = sample.int(1e4, 1),
-    mixdb_path = file.path(data_path, "mixdb_otiti_tagged.rds"),
+    mixdb_name  = "mixdb_otiti_tagged.rds",
     verbose = TRUE,
+    batch_size = 8L,
+    epochs = 20L,
     loss      = "categorical_crossentropy",
     metrics   = "categorical_accuracy",
     optimizer = "adam"
-  )
+)
 
 
 # Model definition ================================================
-architecture <- glue::glue(
-  "trainable embedding - flatten - 32 dense relu - 6 dense sigmoid"
-)
+architecture <- glue::glue("
+    fixed pedianet embedding +
+    flatten +
+    fc6_softmax
+")
 
+# model -----------------------------------------------------------
 model <- keras_model_sequential() %>%
     layer_embedding(
         input_dim = params$max_words,
@@ -38,8 +41,8 @@ model <- keras_model_sequential() %>%
     ) %>%
     # layer_global_max_pooling_1d() %>%
     layer_flatten() %>% # layer_global_average_pooling_1d() %>% #
-    layer_dense(units = 32L, activation = "relu") %>%
-    layer_dense(units = 6L, activation = "sigmoid")
+    # layer_dense(units = 32L, activation = "relu") %>%
+    layer_dense(units = 6L, activation = "softmax")
 
 summary(model)
 
@@ -80,4 +83,6 @@ train_time <- lubridate::now() - start_time
 p <- plot(history) %>%
   gg_history(history, architecture, params, train_time)
 
-save_all_models(model, history, output_path, plot = p, start_time)
+save_all_models(
+  model, history, params$output_path, plot = p, start_time
+)

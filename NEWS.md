@@ -1,3 +1,12 @@
+* Fixed records classes (rows of `attr(mixdb_otiti_tagged, "meta")`):
+  - c(4999, 5574) to "1",
+  - c(5140, 4929, 5039, 5282, 5039, 4978) to "2",
+  - c(5631) to three
+* Added function to randomly guess classes as prediction baseline
+* Added first exploration architecture for analyses
+* Added function to get statistics on predictions
+* Added info to plots and saved objects
+
 # limpido 0.1.1
 
 * Add function `save_all_models()` to store al the relevant information
