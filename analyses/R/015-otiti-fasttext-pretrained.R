@@ -9,14 +9,14 @@ params <- setup_input_data(
     validation_len = 300L,
     max_words = Inf,
     embedding_dim  = "300",
-    maxlen = 300L,
+    maxlen = 500L,
     data_path   = here::here("../../data/"),
     output_path = here::here("../../output/"),
     random_seed = sample.int(1e4, 1),
     mixdb_name  = "mixdb_otiti_tagged.rds",
     verbose = TRUE,
     batch_size = 8L,
-    epochs = 30L,
+    epochs = 20L,
     loss      = "categorical_crossentropy",
     metrics   = "categorical_accuracy",
     optimizer = "adam"
@@ -26,14 +26,13 @@ params <- setup_input_data(
 # Model definition ================================================
 architecture <- glue::glue("
     fixed pedianet embedding +
-    conv2x128_same_relu  + max_pool2 + batch_norm + dropout0.1 +
-    conv2x256_same_relu  + max_pool2 + batch_norm + dropout0.1 +
-    conv3x512_same_relu  + max_pool3 + batch_norm + dropout0.1 +
-    conv5x1024_same_relu + max_pool5 + batch_norm + dropout0.1 +
+    conv(2x256) +
+    max_pool2 + batch_norm +
     flatten +
     fc6_softmax
 ")
 
+# model -----------------------------------------------------------
 model <- keras_model_sequential() %>%
     layer_embedding(
         input_dim = params$max_words,
@@ -45,46 +44,14 @@ model <- keras_model_sequential() %>%
     layer_conv_1d(
         filters = 128,
         kernel_size = 2L,
-        strides = 1L,
         padding = "same",
-        activation = "relu"
+        activation = "relu",
+        name = "l1_1gram_conv",
+        input_shape = c(params$maxlen, params$embedding_dim)
     ) %>%
-    layer_max_pooling_1d(2L) %>%
-    layer_batch_normalization() %>%
-    layer_dropout(rate = 0.1) %>%
-    layer_conv_1d(
-        filters = 256,
-        kernel_size = 2L,
-        strides = 1L,
-        padding = "same",
-        activation = "relu"
-    ) %>%
-    layer_max_pooling_1d(2L) %>%
-    layer_batch_normalization() %>%
-    layer_dropout(rate = 0.1) %>%
-    layer_conv_1d(
-        filters = 512,
-        kernel_size = 3L,
-        strides = 1L,
-        padding = "same",
-        activation = "relu"
-    ) %>%
-    layer_max_pooling_1d(3L) %>%
-    layer_batch_normalization() %>%
-    layer_dropout(rate = 0.1) %>%
-    layer_conv_1d(
-        filters = 1024,
-        kernel_size = 5L,
-        strides = 1L,
-        padding = "same",
-        activation = "relu"
-    ) %>%
-    layer_max_pooling_1d(5L) %>%
-    layer_batch_normalization() %>%
-    layer_dropout(rate = 0.1) %>%
-    # layer_global_max_pooling_1d() %>%
+    layer_max_pooling_1d(pool_size = 2L) %>%
+    layer_batch_normalization(name = "l1_batchnorm") %>%
     layer_flatten() %>%
-    # layer_dense(units = 32L, activation = "relu") %>%
     layer_dense(units = 6L, activation = "softmax")
 
 summary(model)
