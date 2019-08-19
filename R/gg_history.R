@@ -6,6 +6,8 @@
 #' @param params output of [setup_input_data]
 #' @param train_time (POSIXct, dafault `lubridate::now()`) time to
 #'    include in the plot.
+#' @param fine_tuned (lgl, default = FALSE) is the model the fine tuned
+#'    one?.
 #'
 #' @return a [ggplot2]{ggplot} object
 #' @export
@@ -14,30 +16,50 @@ gg_history <- function(
     history,
     architecture,
     params,
-    train_time = lubridate::now()
+    train_time = lubridate::now(),
+    fine_tuned = FALSE
 ) {
 
+    stoped_epoch <- length(history[["metrics"]][["loss"]])
+
+    data_boxplot <- as.data.frame(history) %>%
+        dplyr::mutate(cut = 12.5 * epoch %/% 25)
+
     notes_db <- as.data.frame(history) %>%
-        dplyr::filter(epoch == 15) %>%
-        dplyr::mutate_if(is.numeric, round, 4)
+        dplyr::filter(epoch == max(stoped_epoch)) %>%
+        dplyr::mutate_if(is.numeric, round, 4) %>%
+        dplyr::mutate(cut = 12.5 * epoch %/% 25)
 
     keras_plot +
+        # ggplot2::geom_boxplot(
+        #     data = dplyr::filter(notes_db, data == "validation"),
+        #     ggplot2::aes(group = cut, fill = NULL),
+        #     alpha = 0.4
+        # ) +
+        ggplot2::geom_boxplot(
+            data = dplyr::filter(data_boxplot, data == "validation"),
+            ggplot2::aes(group = cut, fill = NULL),
+            alpha = 0.5
+        ) +
         ggplot2::xlab("Epoch") +
         ggplot2::ggtitle(
             "Loss and categorical accuracy by epochs for the Otiti's training and validation set.",
             subtitle = glue::glue(
                 "Architecture: {architecture}\n",
+                "Fine tuned: {as.character(fine_tuned)}\n",
                 "Full exploration ({params$train_len + params$validation_len} observation overall)\n",
-                "Training set: {params$train_len} (random seed: {params$random_seed})\n",
+                "Training set ss: {params$train_len} (random seed: {params$random_seed})\n",
+                "Train sequence lengths dist: {paste(paste0(names(params$train_dist), ': ', round(params$train_dist)), collapse = ', ')}\n",
                 "Average training sequence length: {round(params$mean_train_len, 2)}\n",
-                "Validation set: {params$validation_len}\n",
+                "Validation set ss: {params$validation_len}\n",
+                "Validation sequence lengths dist: {paste(paste0(names(params$validation_dist), ': ', round(params$validation_dist)), collapse = ', ')}\n",
                 "Average validation sequence length: {round(params$mean_validation_len, 2)}\n",
                 "Words in the embedding dictionary: {params$pedia_dict_size}\n",
                 "Words in the corpus: {params$corpus_dict_size}\n",
                 "Embedding (input, output): ({params$max_words} (padded/truncated at/from the end), {params$embedding_dim})\n",
                 "Embedding-output layer size: {params$maxlen}\n",
                 "Batch size: {params$batch_size}\n",
-                "Epochs: {params$epochs}\n",
+                "Max epochs: {params$epochs} (stopped after {stoped_epoch})\n",
                 "Mutually excluding classes: {params$n_class}\n",
                 "Loss: {str_replace(params$loss, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
                 "Optimizer: {str_replace(params$optimizer, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
