@@ -103,7 +103,7 @@ setup_input_data <- function(
 
     embedding_dim <- match.arg(embedding_dim)
 
-    mixdb_path <- file.path(data_path, mixdb_name)
+
     # Setup -----------------------------------------------------------
     set.seed(random_seed)
 
@@ -114,6 +114,7 @@ setup_input_data <- function(
         na.rm = TRUE
     )
 
+    mixdb_path <- file.path(data_path, mixdb_name)
     mixdb_otiti_tagged <- readr::read_rds(mixdb_path)
     ui_done("mixdb otiti imported")
 
@@ -150,30 +151,34 @@ setup_input_data <- function(
     # Training set ----------------------------------------------------
     train_x <- mixdb_otiti_tagged$x[train_indeces] %>%
         add_oov_when_greater_than(max_words)
-    mean_train_len <- mean(purrr::map_int(train_x, length))
+    train_lens <- purrr::map_int(train_x, length)
+    train_dist <- quantile(train_lens, c(.5, .75, .90, .95, .99))
+    mean_train_len <- mean(train_lens)
     train_x  <- train_x %>%
         keras::pad_sequences(
             maxlen, padding = "post", truncating = "post"
         )
 
-    train_y <- as.integer(mixdb_otiti_tagged$y[train_indeces])
+    train_y <- as.integer(mixdb_otiti_tagged$y[train_indeces]) - 1L
     names(train_y) <- rep("train", length(train_y))
-    train_y <- keras::to_categorical(train_y - 1L)
+    train_y <- keras::to_categorical(train_y)
     ui_done("Training set ready")
 
 
     # Validation set --------------------------------------------------
     validation_x <- mixdb_otiti_tagged$x[validation_indeces] %>%
         add_oov_when_greater_than(max_words)
-    mean_validation_len <- mean(purrr::map_int(validation_x, length))
+    validation_lens <- purrr::map_int(validation_x, length)
+    validation_dist <- quantile(validation_lens, c(.5, .75, .90, .95, .99))
+    mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
         pad_sequences(maxlen,
         padding = "post", truncating = "post"
     )
 
-    validation_y <- as.integer(mixdb_otiti_tagged$y[validation_indeces])
+    validation_y <- as.integer(mixdb_otiti_tagged$y[validation_indeces]) - 1L
     names(validation_y) <- rep("validation", length(validation_y))
-    validation_y <- keras::to_categorical(validation_y - 1L)
+    validation_y <- keras::to_categorical(validation_y)
     n_class <- ncol(train_y)
     ui_done("Validation set ready")
 
@@ -215,10 +220,15 @@ setup_input_data <- function(
     list(
         train_x = train_x,
         train_y = train_y,
+        train_indeces = train_indeces,
         validation_x = validation_x,
         validation_y = validation_y,
+        validation_indeces = validation_indeces,
+        mixdb_used = mixdb_otiti_tagged,
         embedding_matrix = list(embedding_matrix),
+        train_dist = train_dist,
         mean_train_len = mean_train_len,
+        validation_dist = validation_dist,
         mean_validation_len = mean_validation_len,
         pedia_dict_size = max(get_dictionary(mixdb_otiti_tagged)),
         corpus_dict_size = length(words),
