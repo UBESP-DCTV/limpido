@@ -29,6 +29,7 @@ Imports:
     dplyr (>= 0.8.3),
     furrr (>= 0.1.0),
     ggplot2 (>= 3.2.0),
+    glue (>= 1.3.1),
     keras (>= 2.2.4.1),
     magrittr (>= 1.5),
     purrr (>= 0.3.2),
@@ -39,10 +40,11 @@ Imports:
     stringr (>= 1.4.0),
     tibble (>= 2.0.0),
     tidyr (>= 0.8.3),
-    usethis (>= 1.5.1),
-    glue
+    usethis (>= 1.5.1)
 Suggests: 
     covr (>= 3.2.1),
+    depigner (>= 0.4.1),
+    here (>= 0.1),
     roxygen2 (>= 6.1.1),
     spelling (>= 2.0),
     testthat (>= 2.1.0)

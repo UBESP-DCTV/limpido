@@ -37,20 +37,49 @@ to_two <- c(
         "richieste : esame colturale tampone auricolare dx o sx quesito : persistenza di otorrea orecchio dx dopo __NUM__ cicli anticiotici"
     ),
     str_which(meta_db[["diario_1"]],
-        "da ieri febbre , otorrea sx < p > neoduplamox bb sosp "
+        "otitinite . eruzione premolare dxe media dx febbre r __NUM__ : __NUM__ - __NUM__ / __NUM__ / __NUM__ - peso : __NUM__ , alt : __NUM__ , bmi : __NUM__ < p > augmentin bb sosp fl__NUM__ml c / sir n ° conf . __NUM__"
+    ),
+    intersect(
+        str_which(meta_db[["diagnosi1"]],
+            "^otalgia$"
+        ),
+        str_which(meta_db[["diario_1"]],
+            "^otite sierosa$"
+        )
     )
 )
 
-to_three <- meta_db[["diagnosi1"]] %>%
-    str_which(
+to_three <- c(
+    str_which(meta_db[["diagnosi1"]],
         "dolore orecchio dx alla masticazione e deglutizione in terapia con augmentin sugg x oma"
+    ),
+    str_which(meta_db[["diario_1"]],
+        "nn mmigliorato l ' orecchio e si sopetta prenda male l ' antibiotico , maqndato a vis orl urgente , visto dr d ' agnone e dato rocefin fiale i . m . da __NUM__ x __NUM__ gg"
+    ),
+    str_which(meta_db[["diario_1"]],
+        "otorrea a dx , mt opaca , non perfettamente visibile < p > cefixoral __NUM__cpr disp __NUM__mg n ° conf . __NUM__ per otite media acuta < __NUM__ >"
     )
+)
+
+to_four <- c(
+    str_which(meta_db[["diario_1"]],
+        "da ieri febbre , otorrea sx < p > neoduplamox bb sosp fl__NUM__ml c / c n"
+    ),
+    str_which(meta_db[["diario_1"]],
+        "< p > glazidim im __NUM__fl __NUM__mg / __NUM__ , __NUM__ml "
+    ),
+    str_which(meta_db[["diario_1"]],
+        "da ieri febbre , otorrea sx < p > neoduplamox bb sosp "
+    )
+
+)
 
 mixdb_otiti_tagged_old <- mixdb_otiti_tagged
 
-mixdb_otiti_tagged$y[to_one]   <- 1
-mixdb_otiti_tagged$y[to_two]   <- 2
-mixdb_otiti_tagged$y[to_three] <- 3
+mixdb_otiti_tagged$y[to_one]   <- 1L
+mixdb_otiti_tagged$y[to_two]   <- 2L
+mixdb_otiti_tagged$y[to_three] <- 3L
+mixdb_otiti_tagged$y[to_four]  <- 4L
 
 
 saveRDS(mixdb_otiti_tagged, otiti_mixdb_path)

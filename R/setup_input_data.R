@@ -29,6 +29,14 @@
 #'     and every observation which has less then `maxlen` words will be
 #'     padded with 0s down or up to `maxlen` length.
 #'
+#'     If `is_test` is `TRUE`, the validation records not sampled like
+#'     into `validation_len` will continued to be added to the training
+#'     set as always (hence, if you want, for the final model, to merge
+#'     all the train and test set, set `validation_len` to 0). Next,
+#'     the full test set take the place of the training set. (the names
+#'     does not change yet, and for teh moment you wil continue to see
+#'     "validation" instead of "test" even in this situation.)
+#'
 #' @param validation_len (int, default = 300L) Number of example in the
 #'     validation set (see Datails)
 #' @param embedding_dim (int, default = 300L) Dimension of the embedding
@@ -62,6 +70,8 @@
 #' @param metrics (chr, default "categorical_accuracy") the metrics to
 #'     estimate the performance
 #' @param optimizer (chr, dafault "adam") the optimizer for the DL model
+#' @param is_test (lgl, default FALSE) is the training made for the
+#'     final models to test (on the test data)?
 #'
 #' @return a named list including:
 #'    - **train_x**: list of named integers representig the training set
@@ -97,7 +107,8 @@ setup_input_data <- function(
     verbose = TRUE,
     loss      = "categorical_crossentropy",
     metrics   = "categorical_accuracy",
-    optimizer = "adam"
+    optimizer = "adam",
+    is_test   = FALSE
 
 ) {
 
@@ -118,22 +129,6 @@ setup_input_data <- function(
     mixdb_otiti_tagged <- readr::read_rds(mixdb_path)
     ui_done("mixdb otiti imported")
 
-    ui_todo("Implementare statistiche tokens")
-    # if (verbose) {
-    #     token_per_case <- mixdb_otiti_tagged[["x"]] %>%
-    #         purrr::map_int(length)
-    #
-    #     ui_info("min token/observation: {ui_value(min(token_per_case))}")
-    #     ui_info("IQ token/observation: {ui_value(quantile(token_per_case, 0.25))}")
-    #     ui_info("mean token/observation: {ui_value(round(mean(token_per_case), 2))}")
-    #     ui_info("median token/observation: {ui_value(median(token_per_case))}")
-    #     ui_info("IIIQ token/observation: {ui_value(quantile(token_per_case, 0.75))}")
-    #     ui_info("p95 token/observation: {ui_value(quantile(token_per_case, 0.95))}")
-    #     ui_info("p99 token/observation: {ui_value(round(quantile(token_per_case, 0.99), 2))}")
-    #     ui_info("max token/observation: {ui_value(max(token_per_case))}")
-    # }
-
-
     # Parameters ------------------------------------------------------
     # number of training and validation samples
     sets <- attr(mixdb_otiti_tagged, "meta")$set
@@ -142,17 +137,29 @@ setup_input_data <- function(
     # remove some indeces if it is problematic
     admitted_cases_indeces  <- seq_len(sum(sets_len))
 
+    all_train_indeces <- which(sets == "train")
     all_validation_indeces <- which(sets == "validation")
-    validation_indeces <- sample(all_validation_indeces, validation_len)
-    train_indeces <- admitted_cases_indeces[-validation_indeces]
+    all_test_indeces <- which(sets == "test")
 
+    validation_indeces <- sample(all_validation_indeces, validation_len)
+
+    train_vali_indeces <- setdiff(
+        all_validation_indeces,
+        validation_indeces
+    )
+    train_indeces <-  c(all_train_indeces, train_vali_indeces)
+
+    if (is_test) {
+        validation_indeces <- all_test_indeces
+        ui_warn("Test set has taken the place of the validation set!!")
+    }
 
 
     # Training set ----------------------------------------------------
     train_x <- mixdb_otiti_tagged$x[train_indeces] %>%
         add_oov_when_greater_than(max_words)
     train_lens <- purrr::map_int(train_x, length)
-    train_dist <- quantile(train_lens, c(.5, .75, .90, .95, .99))
+    train_dist <- stats::quantile(train_lens, c(.5, .75, .90, .95, .99))
     mean_train_len <- mean(train_lens)
     train_x  <- train_x %>%
         keras::pad_sequences(
@@ -169,10 +176,10 @@ setup_input_data <- function(
     validation_x <- mixdb_otiti_tagged$x[validation_indeces] %>%
         add_oov_when_greater_than(max_words)
     validation_lens <- purrr::map_int(validation_x, length)
-    validation_dist <- quantile(validation_lens, c(.5, .75, .90, .95, .99))
+    validation_dist <- stats::quantile(validation_lens, c(.5, .75, .90, .95, .99))
     mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
-        pad_sequences(maxlen,
+        keras::pad_sequences(maxlen,
         padding = "post", truncating = "post"
     )
 
@@ -181,24 +188,6 @@ setup_input_data <- function(
     validation_y <- keras::to_categorical(validation_y)
     n_class <- ncol(train_y)
     ui_done("Validation set ready")
-
-
-    ui_todo("Implementare il grafico per le distribuzioni delle classi")
-    # if (verbose) {
-    #     tibble::tibble(
-    #         class = c(train_y, validation_y),
-    #         set = names(c(train_y, validation_y))
-    #     ) %>%
-    #         dplyr::group_by(set, class) %>%
-    #         dplyr::summarise(n = dplyr::n()) %>%
-    #         dplyr::mutate(p = n/sum(n)) %>%
-    #         ggplot2::ggplot(aes(x = class, y = p, fill = set)) +
-    #         ggplot2::geom_bar(
-    #             stat = "identity",
-    #             position = ggplot2::position_dodge()
-    #         )
-    # }
-
 
     # Load pretrained -------------------------------------------------
     pretrained_path <- switch(embedding_dim,
@@ -216,6 +205,11 @@ setup_input_data <- function(
     embedding_matrix <- readr::read_rds(embedding_matrix_path)
     ui_done("Embedding matrix loaded")
 
+    if (is_test) {
+        ui_warn(
+            "Remember that now the 'validation' set is the test set!!"
+        )
+    }
     # Return ----------------------------------------------------------
     list(
         train_x = train_x,
@@ -248,6 +242,7 @@ setup_input_data <- function(
         verbose = verbose,
         loss      = loss,
         metrics   = metrics,
-        optimizer = optimizer
+        optimizer = optimizer,
+        is_test = is_test
       )
 }

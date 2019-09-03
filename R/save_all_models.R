@@ -10,6 +10,9 @@
 #'    the saved files'names.
 #' @param fine_tuned (lgl, default = FALSE) is the model the fine tuned
 #'    one?.
+#' @param id (chr, default - NULL) id of the model to use like the
+#'    appendix in the file names to identify the model. If `NULL`, the
+#'    name of the last modified script were used.
 #'
 #' @return invisibly `TRUE`
 #' @export
@@ -29,7 +32,7 @@ save_all_models <- function(
         last_modified <- file.info(files)[["mtime"]] %>% which.max()
 
         id <- dplyr::if_else(length(files) > 0,
-            true = paste0("id",
+            true = paste0("id_",
                 basename(files[[last_modified]]) %>%
                     stringr::str_extract("^[0-9]+")
             ),
