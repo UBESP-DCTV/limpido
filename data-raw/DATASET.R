@@ -53,7 +53,13 @@ class_valid <- validation_08_17 %>%
     ) %>%
     mutate(set = "validation")
 
-class_train_valid <- bind_rows(class_train, class_valid)
+class_test <- test_08_17 %>%
+    select(
+        class, guidpaziente, datacontatto, oracontatto,  id_medico
+    ) %>%
+    mutate(set = "test")
+
+class_gold <- bind_rows(class_train, class_valid, class_test)
 
 
 
@@ -69,7 +75,7 @@ dataset_final2 <- dataset_final %>%
         .keep_all = TRUE
     )
 
-pedia_gold_otiti <- full_join(class_train_valid, dataset_final2)
+pedia_gold_otiti <- full_join(class_gold, dataset_final2)
 
 
 # Save data (RDS) -------------------------------------------------
