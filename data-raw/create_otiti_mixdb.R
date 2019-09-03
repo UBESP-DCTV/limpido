@@ -9,7 +9,7 @@
 #' @return invisibly `TRUE``
 #' @export
 create_otiti_mixdb <- function(
-    data_path = here::here("../../"),
+    data_path = here::here("../../data"),
     pedia_gold_path = file.path(data_path, "pedia_gold_otiti.rds"),
     output_path = file.path(data_path, "mixdb_otiti_tagged.rds")
 ) {

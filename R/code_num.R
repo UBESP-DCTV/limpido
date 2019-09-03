@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#' code_num(c("1", "12", "abc12", "abc.12", "l'82"))
+#' code_num(c("1", "12", "abc12", "abc.12", "l'82", "1.2"))
 code_num <- function(text, code, ignore_in_word) {
     UseMethod("code_num", text)
 }
