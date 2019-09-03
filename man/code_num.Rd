@@ -26,5 +26,5 @@ changed in \code{code}
 Code numbers
 }
 \examples{
-code_num(c("1", "12", "abc12", "abc.12", "l'82"))
+code_num(c("1", "12", "abc12", "abc.12", "l'82", "1.2"))
 }

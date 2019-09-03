@@ -11,7 +11,7 @@ setup_input_data(validation_len = 300L, max_words = Inf,
   random_seed = sample.int(10000, 1),
   mixdb_name = "mixdb_otiti_tagged.rds", verbose = TRUE,
   loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  optimizer = "adam")
+  optimizer = "adam", is_test = FALSE)
 }
 \arguments{
 \item{validation_len}{(int, default = 300L) Number of example in the
@@ -60,6 +60,9 @@ function for the model}
 estimate the performance}
 
 \item{optimizer}{(chr, dafault "adam") the optimizer for the DL model}
+
+\item{is_test}{(lgl, default FALSE) is the training made for the
+final models to test (on the test data)?}
 }
 \value{
 a named list including:
@@ -112,5 +115,13 @@ dimension. `maxlen` define that dimension, i.e., every
 observation which has more then `maxlen` words will be truncated,
 and every observation which has less then `maxlen` words will be
 padded with 0s down or up to `maxlen` length.
+
+If `is_test` is `TRUE`, the validation records not sampled like
+into `validation_len` will continued to be added to the training
+set as always (hence, if you want, for the final model, to merge
+all the train and test set, set `validation_len` to 0). Next,
+the full test set take the place of the training set. (the names
+does not change yet, and for teh moment you wil continue to see
+"validation" instead of "test" even in this situation.)
 }
 }

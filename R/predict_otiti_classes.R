@@ -28,7 +28,7 @@ predict_otiti_classes <- function(.model, params) {
     # ui_info("len y: {n}")
 
     pred <- .model %>%
-        predict(params$validation_x)
+        stats::predict(params$validation_x)
     # ui_info("prediction on x: {str(pred, 1)}")
 
 
@@ -39,7 +39,7 @@ predict_otiti_classes <- function(.model, params) {
     # ui_info("pred labels: {str(pred_labels, 1)}")
 
     pred_prob <- pred[matrix(c(seq_len(n), pred_labels), n)] %>%
-        set_names(paste0("label_", pred_labels))
+        purrr::set_names(paste0("label_", pred_labels))
     # ui_info("pred probs: {str(pred_prob, 1)}")
 
     conf_mtx <- table(pred_labels, y)

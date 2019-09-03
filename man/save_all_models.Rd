@@ -20,6 +20,10 @@ a PNG of the plot too}
 \item{.now}{(POSIXct, dafault \code{lubridate::now()}) time to include in
 the saved files'names.}
 
+\item{id}{(chr, default - NULL) id of the model to use like the
+appendix in the file names to identify the model. If \code{NULL}, the
+name of the last modified script were used.}
+
 \item{fine_tuned}{(lgl, default = FALSE) is the model the fine tuned
 one?.}
 }
