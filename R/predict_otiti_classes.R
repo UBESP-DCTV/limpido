@@ -15,8 +15,6 @@
 #'   - list of wrong classified information (classes predicted, and gold
 #'       ones, and an extraction of wrong records from the full dataset)
 #' @export
-#'
-#' @examples
 predict_otiti_classes <- function(.model, params) {
 
     y <- as.factor(
