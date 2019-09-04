@@ -207,16 +207,17 @@ setup_input_data <- function(
     embedding_matrix <- readr::read_rds(embedding_matrix_path)
     ui_done("Embedding matrix loaded")
     if (dim(embedding_matrix)[[1]] != (max_words + 1L)) {
-    ui_todo("Adjusting embedding matrix to the new bounduaries...")
+        ui_todo("Adjusting embedding matrix to the new bounduaries...")
         embedding_matrix <- embedding_mtrx(
             mixdb_otiti_tagged,
             fasttext_pretrained,
             embedding_dim,
             max_words
-    ui_done("Embedding matrix adjusted to the new bounduaries")
+        )
+        ui_done("Embedding matrix adjusted to the new bounduaries")
         saveRDS(embedding_matrix, embedding_matrix_path)
-    ui_done("New embedding matrix stored")
-    )
+        ui_done("New embedding matrix stored")
+    }
 
     if (is_test) {
         ui_warn(
