@@ -120,7 +120,8 @@ setup_input_data <- function(
 
     max_words <- min(
         max_words,
-        10733L,                      # all words in the train-validation
+        # 10733L,                      # all words in the train-validation
+        # 16310,                       # all words in train-validatio-test
         122607,                            # all words in the pretrained
         na.rm = TRUE
     )
@@ -159,7 +160,7 @@ setup_input_data <- function(
     train_x <- mixdb_otiti_tagged$x[train_indeces] %>%
         add_oov_when_greater_than(max_words)
     train_lens <- purrr::map_int(train_x, length)
-    train_dist <- stats::quantile(train_lens, c(.5, .75, .90, .95, .99))
+    train_dist <- quantile(train_lens, c(.5, .75, .90, .95, .99))
     mean_train_len <- mean(train_lens)
     train_x  <- train_x %>%
         keras::pad_sequences(
@@ -176,10 +177,10 @@ setup_input_data <- function(
     validation_x <- mixdb_otiti_tagged$x[validation_indeces] %>%
         add_oov_when_greater_than(max_words)
     validation_lens <- purrr::map_int(validation_x, length)
-    validation_dist <- stats::quantile(validation_lens, c(.5, .75, .90, .95, .99))
+    validation_dist <- quantile(validation_lens, c(.5, .75, .90, .95, .99))
     mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
-        keras::pad_sequences(maxlen,
+        pad_sequences(maxlen,
         padding = "post", truncating = "post"
     )
 
