@@ -1,3 +1,13 @@
+#' Create the embedding matrix
+#'
+#' @param mixdb_otiti_tagged the [mixdb] containing the original data
+#' @param fasttext_pretrained (chr) the fasttext pretrained character vector
+#' @param embedding_dim (int) the feature dimension of the output embedding
+#' @param max_words (int) maximum number of words considered
+#'     (ranked by frequency)
+#'
+#' @return the embedding matrix
+#' @export
 embedding_mtrx <- function(
     mixdb_otiti_tagged, fasttext_pretrained, embedding_dim, max_words
 ) {

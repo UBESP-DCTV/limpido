@@ -120,9 +120,9 @@ setup_input_data <- function(
 
     max_words <- min(
         max_words,
-        # 10733L,                      # all words in the train-validation
-        # 16310,                       # all words in train-validatio-test
-        122607,                            # all words in the pretrained
+        10733L,                      # all words in the train-validation
+        # 16310L,                       # all words in train-validatio-test
+        122607L,                            # all words in the pretrained
         na.rm = TRUE
     )
 
@@ -180,7 +180,7 @@ setup_input_data <- function(
     validation_dist <- quantile(validation_lens, c(.5, .75, .90, .95, .99))
     mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
-        pad_sequences(maxlen,
+        keras::pad_sequences(maxlen,
         padding = "post", truncating = "post"
     )
 
@@ -199,12 +199,24 @@ setup_input_data <- function(
     ui_done("Pretrained loaded")
 
     # Load embeddings -------------------------------------------------
+
     embedding_matrix_path <- switch(embedding_dim,
         "100" = file.path(data_path, "otiti_embedding_matrix_100.rds"),
         "300" = file.path(data_path, "otiti_embedding_matrix_300.rds")
     )
     embedding_matrix <- readr::read_rds(embedding_matrix_path)
     ui_done("Embedding matrix loaded")
+    if (dim(embedding_matrix)[[1]] != (max_words + 1L)) {
+    ui_todo("Adjusting embedding matrix to the new bounduaries...")
+        embedding_matrix <- embedding_mtrx(
+            mixdb_otiti_tagged,
+            fasttext_pretrained,
+            embedding_dim,
+            max_words
+    ui_done("Embedding matrix adjusted to the new bounduaries")
+        saveRDS(embedding_matrix, embedding_matrix_path)
+    ui_done("New embedding matrix stored")
+    )
 
     if (is_test) {
         ui_warn(
