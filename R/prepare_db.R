@@ -24,6 +24,8 @@ prepare_db <- function(final_pedia_db) {
     only_text <- final_pedia_db %>%
         dplyr::select(diagnosi1:risultato_8) %>%
         dplyr::mutate_all(stringr::str_to_lower) %>%
+        dplyr::mutate_all(tidyr::replace_na, "__NA__") %>%
+        dplyr::mutate_all(stringr::str_replace_all, "(^.*$)", "__SEP__ \\1 __SEP__") %>%
         tidyr::gather() %>%
         dplyr::distinct() %>%
         `[[`("value") %>%

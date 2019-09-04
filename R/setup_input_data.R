@@ -211,7 +211,7 @@ setup_input_data <- function(
         embedding_matrix <- embedding_mtrx(
             mixdb_otiti_tagged,
             fasttext_pretrained,
-            embedding_dim,
+            as.integer(embedding_dim),
             max_words
         )
         ui_done("Embedding matrix adjusted to the new bounduaries")
@@ -238,8 +238,8 @@ setup_input_data <- function(
         mean_train_len = mean_train_len,
         validation_dist = validation_dist,
         mean_validation_len = mean_validation_len,
-        pedia_dict_size = max(get_dictionary(mixdb_otiti_tagged)),
-        corpus_dict_size = length(words),
+        pedia_dict_size = length(fasttext_pretrained),
+        corpus_dict_size = length(get_dictionary(mixdb_otiti_tagged)),
         n_class = n_class,
         random_seed = random_seed,
         validation_len = validation_len,

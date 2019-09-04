@@ -33,7 +33,7 @@ embedding_mtrx <- function(
     embedding_matrix <- array(0, c(length(words), embedding_dim))
     embedding_vector <- double(embedding_dim)
 
-    depigner::pb_len(max_words)
+    pb <- depigner::pb_len(max_words)
     for (i in seq_along(words)) {
         depigner::tick(pb, "Embedding matrix")
         word <- words[[i]]
