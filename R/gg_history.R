@@ -20,13 +20,24 @@ gg_history <- function(
     fine_tuned = FALSE
 ) {
 
-    stoped_epoch <- length(history[["metrics"]][["loss"]])
+        # when trained for test, the stopping roule are decided by
+        # previously runs
+    if (params$is_test) {
+        stoped_epoch <- length(history[["metrics"]][["loss"]])
+    } else {
+        losses <- history[["metrics"]][["val_loss"]]
+        # we need to consider the last epoch that reached the minimum
+        # values of the validation loss
+        stoped_epoch <- which(losses == min(losses, na.rm = TRUE)) %>%
+            .[length(.)]
+    }
+
 
     data_boxplot <- as.data.frame(history) %>%
         dplyr::mutate(cut = 12.5 * epoch %/% 25)
 
     notes_db <- as.data.frame(history) %>%
-        dplyr::filter(epoch == max(stoped_epoch)) %>%
+        dplyr::filter(epoch == stoped_epoch) %>%
         dplyr::mutate_if(is.numeric, round, 4) %>%
         dplyr::mutate(cut = 12.5 * epoch %/% 25)
 
