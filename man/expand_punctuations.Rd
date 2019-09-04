@@ -19,6 +19,11 @@ spaces
 \description{
 expand punctuation
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{character}: method for characters
+}}
+
 \examples{
 expand_punctuations(c("abc de", "a.b", "A.B", "c'è", "s.p.a."))
 }

@@ -5,16 +5,16 @@ start_bot_for_chat("otiti")
 errors_to_telegram("otiti")
 
 
-expanded <- here('../../data/pedia_gold_otiti.rds') %>%
-    readRDS() %>%
-    prepare_db()
+expanded <- here('../data/pedia_gold_otiti.rds') %>%
+    readRDS()
+expanded_txt <- prepare_db(expanded)
 
 send_to_telegram("expanded created")
 
-expanded[(sample(seq_along(expanded), 10))]
+expanded_txt[(sample(seq_along(expanded_txt), 10))]
 
-expanded %>%
-    writeLines(here("../../data/pedia_NUM_expanded.txt"))
+expanded_txt %>%
+    writeLines(here("../data/pedia_NUM_expanded.txt"))
 
 send_to_telegram("expanded written on disk!")
 

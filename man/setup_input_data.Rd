@@ -5,7 +5,7 @@
 \title{Setup for DL}
 \usage{
 setup_input_data(validation_len = 300L, max_words = Inf,
-  embedding_dim = c("300", "100"), maxlen = 300L, batch_size = 8L,
+  embedding_dim = c("300", "100"), maxlen = 500L, batch_size = 8L,
   epochs = 15L, data_path = here::here("../../data/"),
   output_path = here::here("../../output/"),
   random_seed = sample.int(10000, 1),

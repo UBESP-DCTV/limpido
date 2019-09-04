@@ -97,7 +97,7 @@ setup_input_data <- function(
     validation_len = 300L,
     max_words = Inf,
     embedding_dim  = c("300", "100"),
-    maxlen = 300L,
+    maxlen = 500L,
     batch_size = 8L,
     epochs = 15L,
     data_path = here::here("../../data/"),
@@ -120,7 +120,7 @@ setup_input_data <- function(
 
     max_words <- min(
         max_words,
-        10733L,                      # all words in the train-validation
+        # 10733L,                      # all words in the train-validation
         # 16310L,                       # all words in train-validatio-test
         122607L,                            # all words in the pretrained
         na.rm = TRUE
@@ -158,13 +158,14 @@ setup_input_data <- function(
 
     # Training set ----------------------------------------------------
     train_x <- mixdb_otiti_tagged$x[train_indeces] %>%
-        add_oov_when_greater_than(max_words)
+        limpido:::add_oov_when_greater_than(max_words)
     train_lens <- purrr::map_int(train_x, length)
     train_dist <- quantile(train_lens, c(.5, .75, .90, .95, .99))
     mean_train_len <- mean(train_lens)
     train_x  <- train_x %>%
         keras::pad_sequences(
-            maxlen, padding = "post", truncating = "post"
+            maxlen, padding = "post", truncating = "post",
+            value = max_words + 1L
         )
 
     train_y <- as.integer(mixdb_otiti_tagged$y[train_indeces]) - 1L
@@ -181,7 +182,8 @@ setup_input_data <- function(
     mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
         keras::pad_sequences(maxlen,
-        padding = "post", truncating = "post"
+        padding = "post", truncating = "post",
+        value = max_words + 1L
     )
 
     validation_y <- as.integer(mixdb_otiti_tagged$y[validation_indeces]) - 1L
@@ -226,10 +228,10 @@ setup_input_data <- function(
     }
     # Return ----------------------------------------------------------
     list(
-        train_x = train_x,
+        train_x = train_x - 1L,
         train_y = train_y,
         train_indeces = train_indeces,
-        validation_x = validation_x,
+        validation_x = validation_x - 1L,
         validation_y = validation_y,
         validation_indeces = validation_indeces,
         mixdb_used = mixdb_otiti_tagged,
