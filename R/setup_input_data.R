@@ -120,7 +120,7 @@ setup_input_data <- function(
 
     max_words <- min(
         max_words,
-        # 10733L,                      # all words in the train-validation
+        10733L,                      # all words in the train-validation
         # 16310L,                       # all words in train-validatio-test
         122607L,                            # all words in the pretrained
         na.rm = TRUE
@@ -244,8 +244,8 @@ setup_input_data <- function(
         corpus_dict_size = length(get_dictionary(mixdb_otiti_tagged)),
         n_class = n_class,
         random_seed = random_seed,
-        validation_len = validation_len,
-        train_len = sets_len - validation_len,
+        validation_len = nrow(validation_x),
+        train_len = nrow(train_x),
         max_words = max_words + 1L,
         embedding_dim = as.integer(embedding_dim),
         maxlen = maxlen,
