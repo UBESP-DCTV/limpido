@@ -16,7 +16,7 @@ gg_history <- function(
     history,
     architecture,
     params,
-    train_time = lubridate::now(),
+    train_time = lubridate::seconds(),
     fine_tuned = FALSE
 ) {
 
@@ -58,6 +58,7 @@ gg_history <- function(
             subtitle = glue::glue(
                 "Architecture: {architecture}\n",
                 "Fine tuned: {as.character(fine_tuned)}\n",
+                "Testing phase: {as.character(params$is_test)}",
                 "Full exploration ({params$train_len + params$validation_len} observation overall)\n",
                 "Training set ss: {params$train_len} (random seed: {params$random_seed})\n",
                 "Train sequence lengths dist: {paste(paste0(names(params$train_dist), ': ', round(params$train_dist)), collapse = ', ')}\n",
@@ -72,13 +73,13 @@ gg_history <- function(
                 "Batch size: {params$batch_size}\n",
                 "Max epochs: {params$epochs} (stopped after {stoped_epoch})\n",
                 "Mutually excluding classes: {params$n_class}\n",
-                "Loss: {str_replace(params$loss, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
-                "Optimizer: {str_replace(params$optimizer, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
-                "Optimization metric: {str_replace(params$metrics, '[^a-zA-Z]', ' ') %>% str_to_title()}\n",
+                "Loss: {stringr::str_replace(params$loss, '[^a-zA-Z]', ' ') %>% stringr::str_to_title()}\n",
+                "Optimizer: {stringr::str_replace(params$optimizer, '[^a-zA-Z]', ' ') %>% stringr::str_to_title()}\n",
+                "Optimization metric: {stringr::str_replace(params$metrics, '[^a-zA-Z]', ' ') %>% stringr::str_to_title()}\n",
                 "Overall time ellapsed (fit-only): {round(train_time, 2)} {attr(train_time, 'units')}"
             )
         ) +
         ggplot2::geom_text(data = notes_db, ggplot2::aes(
-            x = epoch + 0.5, y = value + 0.04, label = 100 * value
+            x = epoch + 0.5, y = value + 0.04, label = glue::glue("{100*value} [{stoped_epoch}]")
         ))
 }
