@@ -31,10 +31,11 @@ prepare_db <- function(final_pedia_db) {
     ui_done("NA to __NA__")
 
 
-    only_text <- tidyr::gather(only_text) %>%
-        dplyr::distinct() %>%
-        `[[`("value") %>%
-        `[`(!is.na(.))
+    only_text <- tidyr::gather(only_text)
+    ui_done("Gathered")
+
+    only_text <- dplyr::distinct(only_text)[["value"]]
+    only_text <- only_text[!is.na(only_text)]
     ui_done("Single vector ready")
 
     only_text <- stringr::str_replace_all(only_text,

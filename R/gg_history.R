@@ -25,11 +25,10 @@ gg_history <- function(
     if (params$is_test) {
         stoped_epoch <- length(history[["metrics"]][["loss"]])
     } else {
-        losses <- history[["metrics"]][["val_loss"]]
-        # we need to consider the last epoch that reached the minimum
-        # values of the validation loss
-        stoped_epoch <- which(losses == min(losses, na.rm = TRUE)) %>%
-            .[length(.)]
+        val_acc <- history[["metrics"]][["val_categorical_accuracy"]]
+        # we need to consider the first epoch that reached the maximum
+        # values of the validation accuracy
+        stoped_epoch <- which.max(val_acc)
     }
 
 
@@ -58,7 +57,7 @@ gg_history <- function(
             subtitle = glue::glue(
                 "Architecture: {architecture}\n",
                 "Fine tuned: {as.character(fine_tuned)}\n",
-                "Testing phase: {as.character(params$is_test)}",
+                "Testing phase: {as.character(params$is_test)}\n",
                 "Full exploration ({params$train_len + params$validation_len} observation overall)\n",
                 "Training set ss: {params$train_len} (random seed: {params$random_seed})\n",
                 "Train sequence lengths dist: {paste(paste0(names(params$train_dist), ': ', round(params$train_dist)), collapse = ', ')}\n",
@@ -80,6 +79,6 @@ gg_history <- function(
             )
         ) +
         ggplot2::geom_text(data = notes_db, ggplot2::aes(
-            x = epoch + 0.5, y = value + 0.04, label = glue::glue("{100*value} [{stoped_epoch}]")
+            x = epoch + 1, y = value + 0.04, label = glue::glue("{100*value} [{stoped_epoch}]")
         ))
 }

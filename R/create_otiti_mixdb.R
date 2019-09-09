@@ -9,7 +9,7 @@
 #' @return invisibly `TRUE``
 #' @export
 create_otiti_mixdb <- function(
-    data_path = here::here("../../data"),
+    data_path = here::here("../data"),
     pedia_gold_path = file.path(data_path, "pedia_gold_otiti.rds"),
     output_path = file.path(data_path, "mixdb_otiti_tagged.rds")
 ) {
@@ -17,6 +17,8 @@ create_otiti_mixdb <- function(
         dplyr::filter(!is.na(class))
 
     mixdb_otiti_tagged <- gold_otiti %>%
+        dplyr::mutate_if(is.character, stringr::str_to_lower) %>%
+        dplyr::mutate_if(is.character, tidyr::replace_na, "__NA__") %>%
         dplyr::mutate_if(is.character, code_num) %>%
         dplyr::mutate_if(is.character, expand_punctuations) %>%
         mixdb(meta_vars(

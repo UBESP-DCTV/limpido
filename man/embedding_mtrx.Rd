@@ -12,7 +12,7 @@ embedding_mtrx(mixdb_otiti_tagged, fasttext_pretrained, embedding_dim,
 
 \item{fasttext_pretrained}{(chr) the fasttext pretrained character vector}
 
-\item{embedding_dim}{(int) the feature dimension of the output embedding}
+\item{embedding_dim}{(chr or int) the feature dimension of the output embedding}
 
 \item{max_words}{(int) maximum number of words considered
 (ranked by frequency)}

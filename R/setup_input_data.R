@@ -118,17 +118,17 @@ setup_input_data <- function(
     # Setup -----------------------------------------------------------
     set.seed(random_seed)
 
+    mixdb_path <- file.path(data_path, mixdb_name)
+    mixdb_otiti_tagged <- readr::read_rds(mixdb_path)
+    ui_done("mixdb otiti imported")
+
     max_words <- min(
         max_words,
-        10733L,                      # all words in the train-validation
-        # 16310L,                       # all words in train-validatio-test
+        length(limpido:::get_dictionary(mixdb_otiti_tagged)),
         122607L,                            # all words in the pretrained
         na.rm = TRUE
     )
 
-    mixdb_path <- file.path(data_path, mixdb_name)
-    mixdb_otiti_tagged <- readr::read_rds(mixdb_path)
-    ui_done("mixdb otiti imported")
 
     # Parameters ------------------------------------------------------
     # number of training and validation samples
@@ -149,6 +149,7 @@ setup_input_data <- function(
         validation_indeces
     )
     train_indeces <-  c(all_train_indeces, train_vali_indeces)
+    train_indeces <- sample(train_indeces)
 
     if (is_test) {
         validation_indeces <- all_test_indeces
@@ -165,31 +166,35 @@ setup_input_data <- function(
     train_x  <- train_x %>%
         keras::pad_sequences(
             maxlen, padding = "post", truncating = "post",
-            value = max_words + 1L
+            # 1:max_word sono gli indici delle parole,
+            # max_word + 1L è l'indice di __OOV__
+            # mettiamo max_word + 2L come indice di __PAD__, ovvero una
+            # parola che non c'è!!
+            value = max_words + 2L
         )
 
     train_y <- as.integer(mixdb_otiti_tagged$y[train_indeces]) - 1L
     names(train_y) <- rep("train", length(train_y))
     train_y <- keras::to_categorical(train_y)
+    n_class <- ncol(train_y)
     ui_done("Training set ready")
 
 
     # Validation set --------------------------------------------------
     validation_x <- mixdb_otiti_tagged$x[validation_indeces] %>%
-        add_oov_when_greater_than(max_words)
+        limpido:::add_oov_when_greater_than(max_words)
     validation_lens <- purrr::map_int(validation_x, length)
     validation_dist <- quantile(validation_lens, c(.5, .75, .90, .95, .99))
     mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
         keras::pad_sequences(maxlen,
         padding = "post", truncating = "post",
-        value = max_words + 1L
+        value = max_words + 2L
     )
 
     validation_y <- as.integer(mixdb_otiti_tagged$y[validation_indeces]) - 1L
     names(validation_y) <- rep("validation", length(validation_y))
     validation_y <- keras::to_categorical(validation_y)
-    n_class <- ncol(train_y)
     ui_done("Validation set ready")
 
     # Load pretrained -------------------------------------------------
@@ -208,12 +213,13 @@ setup_input_data <- function(
     )
     embedding_matrix <- readr::read_rds(embedding_matrix_path)
     ui_done("Embedding matrix loaded")
-    if (dim(embedding_matrix)[[1]] != (max_words + 1L)) {
+    # __OOV__ è max_word + 1L, __PAD__ è max_word + 2L
+    if (dim(embedding_matrix)[[1]] != (max_words + 2L)) {
         ui_todo("Adjusting embedding matrix to the new bounduaries...")
-        embedding_matrix <- embedding_mtrx(
+        embedding_matrix <- limpido:::embedding_mtrx(
             mixdb_otiti_tagged,
             fasttext_pretrained,
-            as.integer(embedding_dim),
+            embedding_dim,
             max_words
         )
         ui_done("Embedding matrix adjusted to the new bounduaries")
@@ -246,7 +252,7 @@ setup_input_data <- function(
         random_seed = random_seed,
         validation_len = nrow(validation_x),
         train_len = nrow(train_x),
-        max_words = max_words + 1L,
+        max_words = max_words + 2L,
         embedding_dim = as.integer(embedding_dim),
         maxlen = maxlen,
         batch_size = batch_size,
