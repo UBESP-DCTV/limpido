@@ -9,15 +9,15 @@ errors_to_telegram("otiti")
 # Parameters ======================================================
 params <- setup_input_data(
     validation_len = 300L,
-    max_words = 25000,            # ~20% of the full dictionary (Pareto)
+    max_words = Inf,            # ~20% of the full dictionary (Pareto)
     embedding_dim  = "300",
-    maxlen = 500L,
+    maxlen = 1e3,
     data_path   = here::here("../../data/"),
     output_path = here::here("../../output/"),
-    random_seed = sample.int(1e4, 1),
+    random_seed = 1234L, # sample.int(1e4, 1), #
     mixdb_name  = "mixdb_otiti_tagged.rds",
     verbose = TRUE,
-    batch_size = 8L, #16L, #
+    batch_size = 16L, #8L, #
     epochs = 300L,
 
     loss      = "categorical_crossentropy",
@@ -28,7 +28,7 @@ params <- setup_input_data(
 
 
 # Model definition ================================================
-run_name <- "200-fasttext_batch8"
+run_name <- "200-fasttext_batch16"
 architecture <- glue::glue("
     (filename: {run_name})
 
@@ -36,6 +36,7 @@ architecture <- glue::glue("
     global_max +
     fc6_softmax
 ")
+send_to_telegram(glue::glue("start {run_name}"))
 
 # Layer 1 =========================================================
 
@@ -82,7 +83,7 @@ model %>%
 
 callbacks <- list(
     callback_early_stopping(
-      "val_loss", # "categorical_accuracy", #
+      "val_categorical_accuracy", # "categorical_accuracy", #
       patience = 100L,
       restore_best_weights = TRUE    # set to FALSE during test phase!!!
     )
@@ -132,12 +133,12 @@ save_all_models(
 
 callbacks <- list(
     callback_early_stopping(
-      "val_loss", # "categorical_accuracy", # when test #
+      "val_categorical_accuracy", # "categorical_accuracy", # when test #
       patience = 100L,
       restore_best_weights = TRUE
     )
 )
-# params$epochs <- 200L
+# params$epochs <- 100L
 
 model %>%
   unfreeze_weights()
