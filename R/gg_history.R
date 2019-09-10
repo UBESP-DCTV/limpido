@@ -14,9 +14,9 @@
 gg_history <- function(
     keras_plot,
     history,
-    architecture = "CNN-k2f128-b8-do50",
+    architecture,
     params,
-    train_time = as.difftime(154.80, units = "secs"),
+    train_time = lubridate::seconds(),
     fine_tuned = FALSE
 ) {
 
