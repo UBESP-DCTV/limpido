@@ -34,7 +34,7 @@ ensemble_predict <- function(models, params) {
     crude_f <- 2 * (crude_prec * crude_rec) / (crude_prec + crude_rec)
     bal_f   <- 2 * (bal_prec * bal_rec) / (bal_prec + bal_rec)
 
-    are_wrongs <- pred_labels != newy
+    are_wrongs <- pred_labs != newy
 
 
    list(
@@ -52,7 +52,7 @@ ensemble_predict <- function(models, params) {
         ),
         wrongs = list(
             wrong_pred = pred_labs[are_wrongs],
-            wrong_gold = y[are_wrongs],
+            wrong_gold = newy[are_wrongs],
             wrong_records = attr(params$mixdb_used, "meta")[
                 params$validation_indeces[are_wrongs],
             ]
