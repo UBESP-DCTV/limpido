@@ -123,9 +123,9 @@ setup_input_data <- function(
     ui_done("mixdb otiti imported")
 
     max_words <- min(
-        max_words,
-        length(limpido:::get_dictionary(mixdb_otiti_tagged)),
-        122607L,                            # all words in the pretrained
+        # max_words,
+        # length(limpido:::get_dictionary(mixdb_otiti_tagged)),
+        122591L,                           # all words in the pretrained
         na.rm = TRUE
     )
 
