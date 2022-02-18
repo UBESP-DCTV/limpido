@@ -29,6 +29,14 @@
 #'     and every observation which has less then `maxlen` words will be
 #'     padded with 0s down or up to `maxlen` length.
 #'
+#'     If `is_test` is `TRUE`, the validation records not sampled like
+#'     into `validation_len` will continued to be added to the training
+#'     set as always (hence, if you want, for the final model, to merge
+#'     all the train and test set, set `validation_len` to 0). Next,
+#'     the full test set take the place of the training set. (the names
+#'     does not change yet, and for teh moment you wil continue to see
+#'     "validation" instead of "test" even in this situation.)
+#'
 #' @param validation_len (int, default = 300L) Number of example in the
 #'     validation set (see Datails)
 #' @param embedding_dim (int, default = 300L) Dimension of the embedding
@@ -53,8 +61,8 @@
 #'     in the training data, they said it is passed one epoch. `epochs`
 #'     is the number of time the learner will see the full trainng
 #'     dataset for its training.
-#' @param mixdb_path (chr) the path to the RDS file containing [mixdb]
-#'     with the training and the validation data.
+#' @param mixdb_name (chr) name (within `data_path` to the RDS file
+#'     containing [mixdb] with the training and the validation data.
 #' @param verbose (lgl, default TRUE) should info on the progress
 #'     displayed?
 #' @param loss (chr, default "categorical_crossentropy") the loss
@@ -62,6 +70,8 @@
 #' @param metrics (chr, default "categorical_accuracy") the metrics to
 #'     estimate the performance
 #' @param optimizer (chr, dafault "adam") the optimizer for the DL model
+#' @param is_test (lgl, default FALSE) is the training made for the
+#'     final models to test (on the test data)?
 #'
 #' @return a named list including:
 #'    - **train_x**: list of named integers representig the training set
@@ -86,56 +96,41 @@
 setup_input_data <- function(
     validation_len = 300L,
     max_words = Inf,
-    embedding_dim  = 300L,
-    maxlen = c("300", "100"),
+    embedding_dim  = c("300", "100"),
+    maxlen = 500L,
     batch_size = 8L,
     epochs = 15L,
-    data_path = here::here("../data/"),
+    data_path = here::here("../../data/"),
     output_path = here::here("../../output/"),
     random_seed = sample.int(1e4, 1),
-    mixdb_path = file.path(data_path, "mixdb_otiti_tagged.rds"),
+    mixdb_name = "mixdb_otiti_tagged.rds",
     verbose = TRUE,
     loss      = "categorical_crossentropy",
     metrics   = "categorical_accuracy",
-    optimizer = "adam"
+    optimizer = "adam",
+    is_test   = FALSE
 
 ) {
 
-    maxlen <- match.arg(maxlen)
-    # Setup -----------------------------------------------------------
-    pb <- depigner::pb_len(8L)
-    depigner::tick(pb, "setup")
+    embedding_dim <- match.arg(embedding_dim)
 
+
+    # Setup -----------------------------------------------------------
     set.seed(random_seed)
 
+    mixdb_path <- file.path(data_path, mixdb_name)
+    mixdb_otiti_tagged <- readr::read_rds(mixdb_path)
+    ui_done("mixdb otiti imported")
+
     max_words <- min(
-        max_words,
-        10733L,                      # all words in the train-validation
-        122607,                            # all words in the pretrained
+        # max_words,
+        # length(limpido:::get_dictionary(mixdb_otiti_tagged)),
+        122591L,                           # all words in the pretrained
         na.rm = TRUE
     )
 
-    depigner::tick(pb, "read mixdb")
-    mixdb_otiti_tagged <- readr::read_rds(mixdb_path)
-
-    if (verbose) {
-        token_per_case <- mixdb_otiti_tagged[["x"]] %>%
-            purrr::map_int(length)
-
-        ui_info("min token/observation: {ui_value(min(token_per_case))}")
-        ui_info("IQ token/observation: {ui_value(quantile(token_per_case, 0.25))}")
-        ui_info("mean token/observation: {ui_value(mean(token_per_case))}")
-        ui_info("median token/observation: {ui_value(median(token_per_case))}")
-        ui_info("IIIQ token/observation: {ui_value(quantile(token_per_case, 0.75))}")
-        ui_info("p95 token/observation: {ui_value(quantile(token_per_case, 0.95))}")
-        ui_info("p99 token/observation: {ui_value(quantile(token_per_case, 0.99))}")
-        ui_info("max token/observation: {ui_value(max(token_per_case))}")
-    }
-
 
     # Parameters ------------------------------------------------------
-    depigner::tick(pb, "params")
-
     # number of training and validation samples
     sets <- attr(mixdb_otiti_tagged, "meta")$set
     sets_len <- table(sets)
@@ -143,134 +138,133 @@ setup_input_data <- function(
     # remove some indeces if it is problematic
     admitted_cases_indeces  <- seq_len(sum(sets_len))
 
+    all_train_indeces <- which(sets == "train")
     all_validation_indeces <- which(sets == "validation")
-    validation_indeces <- sample(all_validation_indeces, validation_len)
-    train_indeces <- admitted_cases_indeces[-validation_indeces]
+    all_test_indeces <- which(sets == "test")
 
+    validation_indeces <- sample(all_validation_indeces, validation_len)
+
+    train_vali_indeces <- setdiff(
+        all_validation_indeces,
+        validation_indeces
+    )
+    train_indeces <-  c(all_train_indeces, train_vali_indeces)
+    train_indeces <- sample(train_indeces)
+
+    if (is_test) {
+        validation_indeces <- all_test_indeces
+        ui_warn("Test set has taken the place of the validation set!!")
+    }
 
 
     # Training set ----------------------------------------------------
-    depigner::tick(pb, "train set")
-
     train_x <- mixdb_otiti_tagged$x[train_indeces] %>%
-        add_oov_when_greater_than(max_words)
-    mean_train_len <- mean(purrr::map_int(train_x, length))
+        limpido:::add_oov_when_greater_than(max_words)
+    train_lens <- purrr::map_int(train_x, length)
+    train_dist <- quantile(train_lens, c(.5, .75, .90, .95, .99))
+    mean_train_len <- mean(train_lens)
     train_x  <- train_x %>%
         keras::pad_sequences(
-            maxlen, padding = "post", truncating = "post"
+            maxlen, padding = "post", truncating = "post",
+            # 1:max_word sono gli indici delle parole,
+            # max_word + 1L è l'indice di __OOV__
+            # mettiamo max_word + 2L come indice di __PAD__, ovvero una
+            # parola che non c'è!!
+            value = max_words + 2L
         )
 
-    train_y <- as.integer(mixdb_otiti_tagged$y[train_indeces])
+    train_y <- as.integer(mixdb_otiti_tagged$y[train_indeces]) - 1L
     names(train_y) <- rep("train", length(train_y))
-    train_y <- keras::to_categorical(train_y - 1L)
-
+    train_y <- keras::to_categorical(train_y)
+    n_class <- ncol(train_y)
+    ui_done("Training set ready")
 
 
     # Validation set --------------------------------------------------
-    depigner::tick(pb, "validation set")
-
     validation_x <- mixdb_otiti_tagged$x[validation_indeces] %>%
-        add_oov_when_grater_than(max_words)
-    mean_validation_len <- mean(purrr::map_int(validation_x, length))
+        limpido:::add_oov_when_greater_than(max_words)
+    validation_lens <- purrr::map_int(validation_x, length)
+    validation_dist <- quantile(validation_lens, c(.5, .75, .90, .95, .99))
+    mean_validation_len <- mean(validation_lens)
     validation_x <- validation_x %>%
-        pad_sequences(maxlen,
-        padding = "post", truncating = "post"
+        keras::pad_sequences(maxlen,
+        padding = "post", truncating = "post",
+        value = max_words + 2L
     )
 
-    validation_y <- as.integer(mixdb_otiti_tagged$y[validation_indeces])
+    validation_y <- as.integer(mixdb_otiti_tagged$y[validation_indeces]) - 1L
     names(validation_y) <- rep("validation", length(validation_y))
-    validation_y <- keras::to_categorical(validation_y - 1L)
-    n_class <- ncol(train_y)
-
-
-    if (verbose) {
-        tibble::tibble(
-            class = c(train_y, validation_y),
-            set = names(c(train_y, validation_y))
-        ) %>%
-            dplyr::group_by(set, class) %>%
-            dplyr::summarise(n = dplyr::n()) %>%
-            dplyr::mutate(p = n/sum(n)) %>%
-            ggplot2::ggplot(aes(x = class, y = p, fill = set)) +
-            ggplot2::geom_bar(
-                stat = "identity",
-                position = ggplot2::position_dodge()
-            )
-    }
-
+    validation_y <- keras::to_categorical(validation_y)
+    ui_done("Validation set ready")
 
     # Load pretrained -------------------------------------------------
-    depigner::tick(pb, "load pretrained")
-
     pretrained_path <- switch(embedding_dim,
-        "100" = file.path(data_path, "model_100.vec"),
-        "300" = file.path(data_path, "fasttext_pretrained.vec")
+        "100" = file.path(data_path, "pedianet_fasttext_pretrained_100.vec"),
+        "300" = file.path(data_path, "pedianet_fasttext_pretrained_300.vec")
     )
     fasttext_pretrained <- readr::read_lines(pretrained_path, skip = 1L)
+    ui_done("Pretrained loaded")
 
+    # Load embeddings -------------------------------------------------
 
-    # Embedding vectors -----------------------------------------------
-    depigner::tick(pb, "embedding vectors")
-
-    values <- stringr::str_split(fasttext_pretrained, " ")
-    word   <- character(1L)
-    embeddings_index <- new.env(hash = TRUE, parent = emptyenv())
-
-    for (i in seq_along(fasttext_pretrained)) {
-        word <- values[[i]][[1L]]
-        vctr <- as.double(values[[i]][-c(1L, embedding_dim + 2L)])
-        stopifnot(length(vctr) == embedding_dim)
-
-        embeddings_index[[word]] <- vctr
-    }
-
-    # Embedding matrix ------------------------------------------------
-    depigner::tick(pb, "embedding matrix")
-
-    words <- c(
-      names(get_dictionary(mixdb_otiti_tagged)[seq_len(max_words)]),
-      "__OOV__"
+    embedding_matrix_path <- switch(embedding_dim,
+        "100" = file.path(data_path, "otiti_embedding_matrix_100.rds"),
+        "300" = file.path(data_path, "otiti_embedding_matrix_300.rds")
     )
-    max_words <- max_words + 1L
-    embedding_matrix <- array(0, c(length(words), embedding_dim))
-    embedding_vector <- double(embedding_dim)
-
-    for (i in seq_along(words)) {
-        word <- words[[i]]
-        embedding_vector <- embeddings_index[[word]]
-        # ui_info(pryr::address(embedding_vector))
-        # Words not found in the embedding index will be all zeros.
-        if (is.null(embedding_vector)) next
-
-        embedding_matrix[i, ] <- embedding_vector
+    embedding_matrix <- readr::read_rds(embedding_matrix_path)
+    ui_done("Embedding matrix loaded")
+    # __OOV__ è max_word + 1L, __PAD__ è max_word + 2L
+    if (dim(embedding_matrix)[[1]] != (max_words + 2L)) {
+        ui_todo("Adjusting embedding matrix to the new bounduaries...")
+        embedding_matrix <- limpido:::embedding_mtrx(
+            mixdb_otiti_tagged,
+            fasttext_pretrained,
+            embedding_dim,
+            max_words
+        )
+        ui_done("Embedding matrix adjusted to the new bounduaries")
+        saveRDS(embedding_matrix, embedding_matrix_path)
+        ui_done("New embedding matrix stored")
     }
 
+    if (is_test) {
+        ui_warn(
+            "Remember that now the 'validation' set is the test set!!"
+        )
+    }
+    # Return ----------------------------------------------------------
     list(
-        train_x = train_x,
+        train_x = train_x - 1L,
         train_y = train_y,
-        validation_x = validation_x,
+        train_indeces = train_indeces,
+        validation_x = validation_x - 1L,
         validation_y = validation_y,
+        validation_indeces = validation_indeces,
+        mixdb_used = mixdb_otiti_tagged,
         embedding_matrix = list(embedding_matrix),
+        train_dist = train_dist,
         mean_train_len = mean_train_len,
+        validation_dist = validation_dist,
         mean_validation_len = mean_validation_len,
-        pedia_dict_size = max(get_dictionary(mixdb_otiti_tagged)),
-        corpus_dict_size = length(words),
+        pedia_dict_size = length(fasttext_pretrained),
+        corpus_dict_size = length(get_dictionary(mixdb_otiti_tagged)),
         n_class = n_class,
         random_seed = random_seed,
-        validation_len = validation_len,
-        train_len = sets_len - validation_len,
-        max_words = max_words,
-        embedding_dim = embedding_dim,
+        validation_len = nrow(validation_x),
+        train_len = nrow(train_x),
+        max_words = max_words + 2L,
+        embedding_dim = as.integer(embedding_dim),
         maxlen = maxlen,
         batch_size = batch_size,
         epochs = epochs,
         data_path = data_path,
         output_path = output_path,
         random_seed = random_seed,
-        mixdb_path = mixdb_path,
+        mixdb_name = mixdb_name,
         verbose = verbose,
         loss      = loss,
         metrics   = metrics,
-        optimizer = optimizer
+        optimizer = optimizer,
+        is_test = is_test
       )
 }

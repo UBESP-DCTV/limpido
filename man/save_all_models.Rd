@@ -4,21 +4,28 @@
 \alias{save_all_models}
 \title{Save all the relevant object for a DL model}
 \usage{
-save_all_models(model, history, output_path, plot = NULL,
-  .now = lubridate::now())
+save_all_models(model, history, params, plot = NULL,
+  .now = lubridate::now(), id = NULL, fine_tuned = FALSE)
 }
 \arguments{
 \item{model}{a keras model}
 
 \item{history}{akeras history}
 
-\item{output_path}{(chr) the path for the output folder}
+\item{params}{output of \link{setup_input_data}}
 
 \item{plot}{(ggplot, default = NULL) if a plot is provided, it save
 a PNG of the plot too}
 
 \item{.now}{(POSIXct, dafault \code{lubridate::now()}) time to include in
 the saved files'names.}
+
+\item{id}{(chr, default - NULL) id of the model to use like the
+appendix in the file names to identify the model. If \code{NULL}, the
+name of the last modified script were used.}
+
+\item{fine_tuned}{(lgl, default = FALSE) is the model the fine tuned
+one?.}
 }
 \value{
 invisibly \code{TRUE}

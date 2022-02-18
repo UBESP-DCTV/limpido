@@ -11,7 +11,7 @@ library(janitor)
 # Incorporate validation ------------------------------------------
 
 validation_08_17 <- here::here(
-    '../../data-raw/only_validation_otiti_08_17_funzionante_QC.xlsx'
+    '../data-raw/only_validation_otiti_08_17_funzionante_QC.xlsx'
 ) %>%
     read_xlsx() %>%
     select(-year) %>%
@@ -27,15 +27,16 @@ validation_08_17 <- here::here(
     )
 
 save(validation_08_17,
-    file = here::here('../../data/validation_08_17.rda')
+    file = here::here('../data/validation_08_17.rda')
 )
 
 
 # Load all --------------------------------------------------------
 
-load(here('../../data/dataset_final.rda'))
-load(here("../../data/gold_04_07.rda"))
-load(here("../../data/validation_08_17.rda"))
+load(here('../data/dataset_final.rda'))
+load(here("../data/gold_04_07.rda"))
+load(here("../data/validation_08_17.rda"))
+load(here("../data/test_08_17.rda"))
 
 
 # Extract gold classes --------------------------------------------
@@ -53,7 +54,13 @@ class_valid <- validation_08_17 %>%
     ) %>%
     mutate(set = "validation")
 
-class_train_valid <- bind_rows(class_train, class_valid)
+class_test <- test_08_17 %>%
+    select(
+        class, guidpaziente, datacontatto, oracontatto,  id_medico
+    ) %>%
+    mutate(set = "test")
+
+class_gold <- bind_rows(class_train, class_valid, class_test)
 
 
 
@@ -69,12 +76,11 @@ dataset_final2 <- dataset_final %>%
         .keep_all = TRUE
     )
 
-pedia_gold_otiti <- full_join(class_train_valid, dataset_final2)
+pedia_gold_otiti <- full_join(class_gold, dataset_final2)
 
 
 # Save data (RDS) -------------------------------------------------
 
 saveRDS(pedia_gold_otiti,
-    file = here('../../data/pedia_gold_otiti.rds'),
-    compress = "xz"
+    file = here('../data/pedia_gold_otiti.rds')
 )

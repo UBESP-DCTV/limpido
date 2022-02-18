@@ -5,7 +5,7 @@
 \title{Custom ggplot for keras' historys}
 \usage{
 gg_history(keras_plot, history, architecture, params,
-  train_time = lubridate::now())
+  train_time = lubridate::seconds(), fine_tuned = FALSE)
 }
 \arguments{
 \item{keras_plot}{a keras plot object}
@@ -18,6 +18,9 @@ gg_history(keras_plot, history, architecture, params,
 
 \item{train_time}{(POSIXct, dafault \code{lubridate::now()}) time to
 include in the plot.}
+
+\item{fine_tuned}{(lgl, default = FALSE) is the model the fine tuned
+one?.}
 }
 \value{
 a [ggplot2]{ggplot} object

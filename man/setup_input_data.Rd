@@ -5,13 +5,13 @@
 \title{Setup for DL}
 \usage{
 setup_input_data(validation_len = 300L, max_words = Inf,
-  embedding_dim = 300L, maxlen = c("300", "100"), batch_size = 8L,
-  epochs = 15L, data_path = here::here("../data/"),
+  embedding_dim = c("300", "100"), maxlen = 500L, batch_size = 8L,
+  epochs = 15L, data_path = here::here("../../data/"),
   output_path = here::here("../../output/"),
-  random_seed = sample.int(10000, 1), mixdb_path = file.path(data_path,
-  "mixdb_otiti_tagged.rds"), verbose = TRUE,
+  random_seed = sample.int(10000, 1),
+  mixdb_name = "mixdb_otiti_tagged.rds", verbose = TRUE,
   loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  optimizer = "adam")
+  optimizer = "adam", is_test = FALSE)
 }
 \arguments{
 \item{validation_len}{(int, default = 300L) Number of example in the
@@ -47,8 +47,8 @@ output objects}
 \item{random_seed}{(int, default is random) seed for the random
 computation}
 
-\item{mixdb_path}{(chr) the path to the RDS file containing \link{mixdb}
-with the training and the validation data.}
+\item{mixdb_name}{(chr) name (within \code{data_path} to the RDS file
+containing \link{mixdb} with the training and the validation data.}
 
 \item{verbose}{(lgl, default TRUE) should info on the progress
 displayed?}
@@ -60,6 +60,9 @@ function for the model}
 estimate the performance}
 
 \item{optimizer}{(chr, dafault "adam") the optimizer for the DL model}
+
+\item{is_test}{(lgl, default FALSE) is the training made for the
+final models to test (on the test data)?}
 }
 \value{
 a named list including:
@@ -112,5 +115,13 @@ dimension. `maxlen` define that dimension, i.e., every
 observation which has more then `maxlen` words will be truncated,
 and every observation which has less then `maxlen` words will be
 padded with 0s down or up to `maxlen` length.
+
+If `is_test` is `TRUE`, the validation records not sampled like
+into `validation_len` will continued to be added to the training
+set as always (hence, if you want, for the final model, to merge
+all the train and test set, set `validation_len` to 0). Next,
+the full test set take the place of the training set. (the names
+does not change yet, and for teh moment you wil continue to see
+"validation" instead of "test" even in this situation.)
 }
 }

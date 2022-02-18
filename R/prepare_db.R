@@ -18,19 +18,39 @@ prepare_db <- function(final_pedia_db) {
     usethis::ui_info(
         "DB preparation: vectorise, __NUM__ codes, expand punctuation."
     )
-    on.exit(usethis::ui_done("DB preparation finished."))
 
 
-    only_text <- final_pedia_db(diagnosi1:risultato_8) %>%
-        dplyr::mutate_all(stringr::str_to_lower) %>%
-        tidyr::gather() %>%
-        dplyr::distinct() %>%
-        `[[`("value") %>%
-        `[`(!is.na(.))
-    usethis::ui_done("Textual vector ready")
+    only_text <- final_pedia_db %>%
+        dplyr::select(diagnosi1:risultato_8) %>%
+        dplyr::mutate_all(stringr::str_to_lower)
+    ui_done("lowered")
 
+
+    only_text <- dplyr::mutate_all(only_text,
+        tidyr::replace_na, "__NA__")
+    ui_done("NA to __NA__")
+
+
+    only_text <- tidyr::gather(only_text)
+    ui_done("Gathered")
+
+    only_text <- dplyr::distinct(only_text)[["value"]]
+    only_text <- only_text[!is.na(only_text)]
+    ui_done("Single vector ready")
+
+    only_text <- stringr::str_replace_all(only_text,
+        "(^.*$)", "__SEP__ \\1 __SEP__"
+    )
+    ui_done("__SEP__ added")
+
+    ui_done("Full textual vector ready")
+
+    ui_info("Coding numbers...")
     res <- code_num(only_text)
-    usethis::ui_done("Numbers coded")
+    ui_done("Numbers coded")
 
-    expand_punctuations(res)
+    ui_info("Expanding punctuations...")
+    res <- expand_punctuations(res)
+    ui_done("Punctuations expanded")
+    res
 }

@@ -4,7 +4,7 @@
 \alias{create_otiti_mixdb}
 \title{Create the main mixdb for the otiti project}
 \usage{
-create_otiti_mixdb(data_path = here::here("../../"),
+create_otiti_mixdb(data_path = here::here("../data"),
   pedia_gold_path = file.path(data_path, "pedia_gold_otiti.rds"),
   output_path = file.path(data_path, "mixdb_otiti_tagged.rds"))
 }
