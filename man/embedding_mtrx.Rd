@@ -4,8 +4,12 @@
 \alias{embedding_mtrx}
 \title{Create the embedding matrix}
 \usage{
-embedding_mtrx(mixdb_otiti_tagged, fasttext_pretrained, embedding_dim,
-  max_words)
+embedding_mtrx(
+  mixdb_otiti_tagged,
+  fasttext_pretrained,
+  embedding_dim,
+  max_words
+)
 }
 \arguments{
 \item{mixdb_otiti_tagged}{the \link{mixdb} containing the original data}

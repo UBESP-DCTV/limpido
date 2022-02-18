@@ -4,8 +4,14 @@
 \alias{gg_history}
 \title{Custom ggplot for keras' historys}
 \usage{
-gg_history(keras_plot, history, architecture, params,
-  train_time = lubridate::seconds(), fine_tuned = FALSE)
+gg_history(
+  keras_plot,
+  history,
+  architecture,
+  params,
+  train_time = lubridate::seconds(),
+  fine_tuned = FALSE
+)
 }
 \arguments{
 \item{keras_plot}{a keras plot object}

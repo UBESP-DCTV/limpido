@@ -4,14 +4,23 @@
 \alias{setup_input_data}
 \title{Setup for DL}
 \usage{
-setup_input_data(validation_len = 300L, max_words = Inf,
-  embedding_dim = c("300", "100"), maxlen = 500L, batch_size = 8L,
-  epochs = 15L, data_path = here::here("../../data/"),
+setup_input_data(
+  validation_len = 300L,
+  max_words = Inf,
+  embedding_dim = c("300", "100"),
+  maxlen = 500L,
+  batch_size = 8L,
+  epochs = 15L,
+  data_path = here::here("../../data/"),
   output_path = here::here("../../output/"),
   random_seed = sample.int(10000, 1),
-  mixdb_name = "mixdb_otiti_tagged.rds", verbose = TRUE,
-  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  optimizer = "adam", is_test = FALSE)
+  mixdb_name = "mixdb_otiti_tagged.rds",
+  verbose = TRUE,
+  loss = "categorical_crossentropy",
+  metrics = "categorical_accuracy",
+  optimizer = "adam",
+  is_test = FALSE
+)
 }
 \arguments{
 \item{validation_len}{(int, default = 300L) Number of example in the

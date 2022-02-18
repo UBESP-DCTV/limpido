@@ -4,8 +4,15 @@
 \alias{save_all_models}
 \title{Save all the relevant object for a DL model}
 \usage{
-save_all_models(model, history, params, plot = NULL,
-  .now = lubridate::now(), id = NULL, fine_tuned = FALSE)
+save_all_models(
+  model,
+  history,
+  params,
+  plot = NULL,
+  .now = lubridate::now(),
+  id = NULL,
+  fine_tuned = FALSE
+)
 }
 \arguments{
 \item{model}{a keras model}
