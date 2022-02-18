@@ -3,8 +3,8 @@ test_that("mixdb() returned the correct class", {
 })
 
 test_that("mixdb() default method work properly", {
-    expect_output(try(mixdb(1)), "provided is of class")
-    expect_output(try(mixdb(1)), "must inherits.*data\\.frame")
+    expect_message(try(mixdb(1)), "provided is of class")
+    expect_message(try(mixdb(1)), "must inherits.*data\\.frame")
     expect_error(mixdb(1), "data.frame.*\\.data",
         class = "usethis_error"
     )

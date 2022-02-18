@@ -9,15 +9,15 @@ test_that("add_ngram() returned the correct class", {
 })
 
 test_that("add_ngram() default method work properly", {
-    expect_output(try(add_ngram(1)), "provided is of class")
-    expect_output(try(add_ngram(1)), "must inherits.*mixdb")
+    expect_message(try(add_ngram(1)), "provided is of class")
+    expect_message(try(add_ngram(1)), "must inherits.*mixdb")
     expect_error(add_ngram(1), "mixdb.*x", class = "usethis_error")
 
-    expect_output(
+    expect_message(
         try(add_ngram(test_mixdb, "two")),
         "provided is of class"
     )
-    expect_output(
+    expect_message(
         try(add_ngram(test_mixdb, "two")),
         "must be an.*integer"
     )
