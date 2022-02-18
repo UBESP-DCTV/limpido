@@ -80,10 +80,9 @@ mixdb.data.frame <- function(.data, .meta_vars = NULL) {
     meta_df <- .data %>%
         dplyr::select(!!!c(
             # they are disjoint by costruction!
-            .meta_vars,
-            syms(c(names(text_df), "class")))
-        )
-
+            as.list(.meta_vars),
+            syms(c(names(text_df), "class"))
+        ))
     # extract words (token will be applyed later, eventualy)
     text_df <- text_df %>%
         dplyr::mutate_all(tidyr::replace_na, "__NA__") %>%
@@ -94,10 +93,8 @@ mixdb.data.frame <- function(.data, .meta_vars = NULL) {
     } else {
         as.list(text_df[[1]])
     }
-
     # define the dictionary (sorted table of named integers)
     dictionary <- dictionary(text)
-
 
     structure(
         list(
