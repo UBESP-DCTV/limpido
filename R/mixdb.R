@@ -79,34 +79,48 @@ mixdb.data.frame <- function(.data, .meta_vars = NULL) {
     # define the meta dataset (including text and classes)
     meta_df <- .data %>%
         dplyr::select(!!!c(
-            # they are disjoint by costruction!
+            # they are disjoint by construction!
             as.list(.meta_vars),
             syms(c(names(text_df), "class"))
         ))
-    # extract words (token will be applyed later, eventualy)
+
+    # this is a factor of the output classes. each entry is
+    # to the corresponding observation.
+    y <- as.factor(.data[["class"]])
+    rm(.data)
+
+    # extract words (token will be applied later, eventually)
     text_df <- text_df %>%
-        dplyr::mutate_all(tidyr::replace_na, "__NA__") %>%
-        dplyr::mutate_all(stringr::str_split, "\\s+")
+        dplyr::mutate(
+            dplyr::across(
+                dplyr::everything(),
+                tidyr::replace_na,
+                "__NA__"
+            ),
+            dplyr::across(
+                dplyr::everything(),
+                stringr::str_split,
+                "\\s+"
+            )
+        )
 
     text <- if (length(text_df) > 1) {
         purrr::reduce(text_df, paste_sep)
     } else {
         as.list(text_df[[1]])
     }
+    rm(text_df)
+
     # define the dictionary (sorted table of named integers)
     dictionary <- dictionary(text)
 
-    structure(
-        list(
-            # this is a list of integer vector representing the mapping
-            # to the vocabulary for the text. each entry is an
-            # observation.
-            x = furrr::future_map(text, ~dictionary[.]),
+    # this is a list of integer vector representing the mapping
+    # to the vocabulary for the text. each entry is an
+    # observation.
+    x <- purrr::map(text, ~dictionary[.])
 
-            # this is a factor of the output classes. each entry is
-            # to the corresponding observation.
-            y = as.factor(.data[["class"]])
-        ),
+    structure(
+        list(x = x, y = y),
         meta  = meta_df,
         dictionary = dictionary,
         class = "mixdb"
